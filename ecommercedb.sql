@@ -169,6 +169,7 @@ CREATE TABLE `users` (
   `FullName` varchar(255) DEFAULT NULL,
   `PhoneNumber` varchar(15) DEFAULT NULL,
   `Address` varchar(255) DEFAULT NULL,
+  `AvatarUrl` varchar(255) DEFAULT NULL,
   `CreatedBy` int(11) DEFAULT NULL,
   `CreatedAt` datetime DEFAULT current_timestamp(),
   `UpdatedBy` int(11) DEFAULT NULL,
@@ -249,7 +250,6 @@ ALTER TABLE `userroles`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`UserID`),
-  ADD UNIQUE KEY `Username` (`Username`),
   ADD UNIQUE KEY `Email` (`Email`);
 
 --

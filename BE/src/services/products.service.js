@@ -11,7 +11,6 @@ function productRepository() {
 
 function readProduct(payload) {
   return {
-    UserID: payload.UserID,
     ProductName: payload.ProductName,
     CategoryID: payload.CategoryID,
     Description: payload.Description,
@@ -45,7 +44,7 @@ async function createProduct(payload) {
 
       if (Array.isArray(files) && files.length !== 0) {
         const fileNames = files.map((file) => file.filename);
-        await insertImages(existingProduct.ProductID, fileNames, CreatedBy);
+        await insertImages(existingProduct.ProductID, fileNames);
       }
       return { id: existingProduct.ProductID, ...product };
     }
@@ -55,17 +54,16 @@ async function createProduct(payload) {
   const [id] = await productRepository().insert(product);
   if (Array.isArray(files) && files.length !== 0) {
     const fileNames = files.map((file) => file.filename);
-    await insertImages(id, fileNames, CreatedBy);
+    await insertImages(id, fileNames);
   }
   return { id, ...product };
 }
 
 // Hàm chèn image cho sản phẩm
-async function insertImages(ProductID, fileNames, CreatedBy) {
+async function insertImages(ProductID, fileNames) {
   const userRoles = fileNames.map((fileName) => ({
     ProductID,
     ImageUrl: `/public/uploads/products/${fileName}`,
-    CreatedBy,
   }));
 
   await productImageRepository().insert(userRoles);
@@ -84,7 +82,7 @@ async function getManyProducts(query) {
       }
     })
     .select(
-      knex.raw("count(ProductID) OVER() AS recordCount"),
+      knex.raw("count(p.ProductID) OVER() AS recordCount"),
       "p.ProductID",
       "c.CategoryName",
       "p.ProductName",
@@ -93,10 +91,27 @@ async function getManyProducts(query) {
       "p.StockQuantity",
       "u.FullName as created_name",
       "p.CreatedAt",
-      "p.UpdatedAt"
+      "p.UpdatedAt",
+      "pi.ImageUrl"
     )
     .leftJoin("categories as c", "p.CategoryID", "c.CategoryID")
-    .leftJoin("users as u", "p.UserID", "u.UserID")
+    .leftJoin("users as u", "p.CreatedAt", "u.UserID")
+    .leftJoin(
+      knex
+        .select("pi.ProductID", "pi.ImageUrl")
+        .from("productimages as pi")
+        .select(
+          knex.raw(
+            "ROW_NUMBER() OVER (PARTITION BY pi.ProductID) as row_num"
+          )
+        )
+        .as("pi"),
+      function () {
+        this.on(
+          knex.raw("pi.row_num = 1")
+        );
+      }
+    )
     .limit(paginator.limit)
     .offset(paginator.offset);
 
@@ -159,7 +174,7 @@ async function updateProduct(id, payload) {
 
   if (Array.isArray(files) && files.length !== 0) {
     const fileNames = files.map((file) => file.filename);
-    await insertImages(id, fileNames, UpdatedBy);
+    await insertImages(id, fileNames);
   }
   return { ...updatedProduct, ...update };
 }

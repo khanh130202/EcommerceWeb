@@ -9,17 +9,10 @@ async function createProduct(req, res, next) {
   if (!req.body?.CategoryID) {
     return next(new ApiError(400, "Category should be a non-empty string"));
   }
-  if (!req.body?.product_status_id) {
-    return next(new ApiError(400, "Product status should be a non-empty string"));
-  }
-  if (!req.body?.title) {
-    return next(new ApiError(400, "Title should be a non-empty string"));
-  }
 
   try {
     const product = await productsService.createProduct({
       ...req.body,
-      UserID: req.user.UserID,
       CreatedBy: req.user.UserID,
       files: req.files ? req.files : null,
     });
