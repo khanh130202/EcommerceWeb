@@ -53,7 +53,7 @@ const productService = {
   async delete(data: any) {
     const toastStore = useToastStore()
     return await apiClient
-      .delete(API.DELETE(data.product_id))
+      .delete(API.DELETE(data.ProductID))
       .then((response: any) => {
         toastStore.fromApiResponse(response)
         return response

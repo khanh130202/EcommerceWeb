@@ -96,7 +96,7 @@ onMounted(async () => {
  */
 // onSearch
 const onSearch = async () => {
-  await store.getList(account.value.user_id, props.product_status_id)
+  await store.getList(account.value.UserID)
 }
 
 // onPageChanged
@@ -116,7 +116,7 @@ const onAddNew = () => {
 // onEdit
 const onEdit = (item: any) => {
   popupType.value = POPUP_TYPE.EDIT
-  detailRef.value.open('Chỉnh sửa', item.product_id, props.product_status_id, async (res: any) => {
+  detailRef.value.open('Chỉnh sửa', item.ProductID, props.product_status_id, async (res: any) => {
     if (res) await onSearch()
   })
 }
@@ -124,7 +124,7 @@ const onEdit = (item: any) => {
 // onView
 const onView = (item: any) => {
   popupType.value = POPUP_TYPE.VIEW
-  detailRef.value.open('Chi tiết', item.product_id, props.product_status_id)
+  detailRef.value.open('Chi tiết', item.ProductID, props.product_status_id)
 }
 
 // onSort

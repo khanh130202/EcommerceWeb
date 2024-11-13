@@ -8,7 +8,7 @@
               Tên người nhận
             </div>
           </template>
-          {{ order.recipient_name }}
+          {{ order.RecipientName }}
         </el-descriptions-item>
         <el-descriptions-item>
           <template #label>
@@ -16,7 +16,7 @@
               Số điện thoại
             </div>
           </template>
-          {{ order.phone }}
+          {{ order.PhoneNumber }}
         </el-descriptions-item>
         <el-descriptions-item>
           <template #label>
@@ -24,7 +24,7 @@
               Địa chỉ
             </div>
           </template>
-          {{ order.address }}
+          {{ order.Address }}
         </el-descriptions-item>
         <el-descriptions-item>
           <template #label>
@@ -32,7 +32,7 @@
               Ngày đặt hàng
             </div>
           </template>
-          {{ dateTime.formatDateTimeNew(order.created_at) }}
+          {{ dateTime.formatDateTimeNew(order.CreatedAt) }}
         </el-descriptions-item>
         <el-descriptions-item>
           <template #label>
@@ -40,7 +40,7 @@
               Tổng tiền
             </div>
           </template>
-          {{ number.formatCurrency(order.total_amount) }}
+          {{ number.formatCurrency(order.TotalAmount) }}
         </el-descriptions-item>
         <el-descriptions-item>
           <template #label>
@@ -84,13 +84,13 @@
               Ghi chú
             </div>
           </template>
-          {{ order.note }}
+          {{ order.Note }}
         </el-descriptions-item>
       </el-descriptions>
       <el-table v-else :data="dataGrid">
-        <el-table-column label="Tên sản phẩm" prop="product_name" />
-        <el-table-column label="Số lượng" prop="quantity" />
-        <el-table-column label="Giá tiền" prop="price" />
+        <el-table-column label="Tên sản phẩm" prop="ProductName" />
+        <el-table-column label="Số lượng" prop="Quantity" />
+        <el-table-column label="Giá tiền" prop="Price" />
         <el-table-column label="Action">
           <template #default="scope">
             <el-button type="warning" size="small" class="btn-acttion" @click="onView(scope.row)"
@@ -106,20 +106,15 @@
 /**
  * Dependencies injection library
  */
-import { storeToRefs } from 'pinia'
 import { ref, reactive } from "vue";
 import orderService from '@app/services/order.service';
 import dateTime from "@/utils/dateTime";
 import number from "@/utils/number";
 import { useRouter } from 'vue-router'
-import { MASTER_CODE } from "@/commons/const";
-import { useMasterCodeStore } from '@app/stores/masterCode.store'
 
 /**
  * Variable define
  */
-const storeMasterCode = useMasterCodeStore();
-const { dataGrid: dataGridMasterCode } = storeToRefs(storeMasterCode)
 const router = useRouter()
 const modal = ref<any>(null);
 const modalTitle = ref<any>(null);
@@ -131,15 +126,15 @@ const orderStatuses = ref<any>([]);
 const paymentMethods = ref<any>([]);
 
 const order = reactive({
-  order_id: '',
+  OrderID: '',
   order_status_id: '',
   payment_method_id: '',
-  recipient_name: '',
-  phone: '',
-  address: '',
-  created_at: '',
-  total_amount: '',
-  note: '',
+  RecipientName: '',
+  PhoneNumber: '',
+  Address: '',
+  CreatedAt: '',
+  TotalAmount: '',
+  Note: '',
   is_deleted: '',
 });
 
@@ -162,19 +157,15 @@ const open = async (title: any, item: any, flagDetail: boolean, flagManage: bool
 
     dataGrid.value = response.map((item: any) => {
       return {
-        product_id: item.product_id,
-        product_name: item.product_name,
-        price: number.formatCurrency(item.price),
-        quantity: number.formatNumberWithDots(item.quantity),
+        ProductID: item.ProductID,
+        ProductName: item.ProductName,
+        Price: number.formatCurrency(item.Price),
+        Quantity: number.formatNumberWithDots(item.Quantity),
       };
     });
   }
   else {
     let orderInfo = {} as any;
-    await storeMasterCode.getList(MASTER_CODE.ORDER_STATUS)
-    orderStatuses.value = [...dataGridMasterCode.value]
-    await storeMasterCode.getList(MASTER_CODE.PAYMENT_METHOD)
-    paymentMethods.value = [...dataGridMasterCode.value]
 
     if (item)
       orderInfo = (await orderService.detail(item)).data?.order
@@ -191,7 +182,7 @@ const onView = (item: any) => {
   router.push({
     name: 'Detail',
     params: {
-      id: item.product_id
+      id: item.ProductID
     }
   })
 };

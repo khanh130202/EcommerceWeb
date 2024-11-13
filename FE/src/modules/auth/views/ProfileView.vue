@@ -7,11 +7,11 @@
                 <el-descriptions title="Thông tin tài khoản" direction="vertical" border style="margin-top: 20px">
                     <el-descriptions-item :rowspan="2" :width="140" label="Ảnh đại diện" align="center">
                         <el-image style="width: 100px; height: 100px"
-                            :src="account.avatar_url ? getImageUrl(account.avatar_url) : `https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png`" />
+                            :src="account.AvatarUrl ? getImageUrl(account.AvatarUrl) : `https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png`" />
                     </el-descriptions-item>
-                    <el-descriptions-item label="Tên hiển thị">{{ account.display_name }}</el-descriptions-item>
-                    <el-descriptions-item label="Số điện thoại">{{ account.phone_number }}</el-descriptions-item>
-                    <el-descriptions-item label="Email">{{ account.email }}</el-descriptions-item>
+                    <el-descriptions-item label="Tên hiển thị">{{ account.FullName }}</el-descriptions-item>
+                    <el-descriptions-item label="Số điện thoại">{{ account.PhoneNumber }}</el-descriptions-item>
+                    <el-descriptions-item label="Email">{{ account.Email }}</el-descriptions-item>
                 </el-descriptions>
                 <div style="margin-top: 10px;">
                     <el-button :loading="isLoading" type="success" @click="onClickUpdate">
@@ -66,10 +66,10 @@ onMounted(() => {
  * Function
  */
 const onClickUpdate = async () => {
-    editRef.value.open("Cập nhật thông tin cá nhân", account.value.user_id)
+    editRef.value.open("Cập nhật thông tin cá nhân", account.value.UserID)
 };
 const onClickChangePassword = async () => {
-    changePassRef.value.open("Đổi mật khẩu", account.value.user_id)
+    changePassRef.value.open("Đổi mật khẩu", account.value.UserID)
 };
 
 </script>

@@ -21,12 +21,12 @@ export const useOrderStore = defineStore('useOrderStore', {
     * Action
     */
     // Get list order
-    async getList(user_id?: any, product_created_by?: any, order_status_id?: any, payment_method_id?: any) {
+    async getList(UserID?: any, product_created_by?: any, order_status_id?: any, payment_method_id?: any) {
       this.loading = true
       await orderService
         .getList({
           search: this.search,
-          user_id: user_id,
+          UserID: UserID,
           order_status_id: order_status_id !== 0 ? order_status_id : null,
           payment_method_id: payment_method_id !== 0 ? payment_method_id : null,
           product_created_by: product_created_by,
@@ -36,17 +36,17 @@ export const useOrderStore = defineStore('useOrderStore', {
           this.orders = data.data?.orders ?? []
           this.pageConfig.total = data.data?.metadata?.totalRecords
           this.orders = this.orders.map((item: any) => {
-            if (item.created_at) {
+            if (item.CreatedAt) {
               const formatted = dateTime.formatDateTimeNew(
-                item.created_at
+                item.CreatedAt
               );
-              item.created_at = formatted;
+              item.CreatedAt = formatted;
             }
-            if (item.total_amount) {
+            if (item.TotalAmount) {
               const formatted = number.formatCurrency(
-                item.total_amount
+                item.TotalAmount
               );
-              item.total_amount = formatted;
+              item.TotalAmount = formatted;
             }
             return item;
           });

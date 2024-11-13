@@ -29,6 +29,6 @@ export const API = {
   SIGN_IN: `${FUNC_NAME}/login`,
   GET_INFO: `${FUNC_NAME}/infoLogin`,
   REFRESH_TOKEN: `${FUNC_NAME}/refresh-token`,
-  CHANGE_PROFILE: (user_id: string) => `${FUNC_NAME}/change-profile/${user_id}`,
+  CHANGE_PROFILE: (UserID: string) => `${FUNC_NAME}/change-profile/${UserID}`,
   CHANGE_PASSWORD: `${FUNC_NAME}/change-password`,
 }

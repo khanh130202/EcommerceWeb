@@ -8,9 +8,8 @@ function readCart(payload) {
   return {
     UserID: payload.UserID,
     CreatedBy: payload.CreatedBy,
-    UpdatedAt: new Date(),
+    CreatedAt: new Date(),
     UpdatedBy: payload.UpdatedBy,
-    IsDeleted: payload.IsDeleted,
   };
 }
 
@@ -20,11 +19,6 @@ async function createCart(payload) {
     .first();
 
   if (existingCart) {
-    if (existingCart.IsDeleted) {
-      await cartRepository()
-        .where("UserID", existingCart.UserID)
-        .update({ IsDeleted: false });
-    }
     return await getCartItems(payload.UserID);
   }
 
@@ -50,7 +44,7 @@ async function deleteCartItemsByUserId(CartID) {
   await knex("cartitems").where("CartID", CartID).delete();
 }
 
-async function addCartItem(UserID, item) {
+async function addCartItem(UserID, item) {    
   const cart = await knex("carts").where("UserID", UserID).first();
 
   if (!cart) {
@@ -60,9 +54,9 @@ async function addCartItem(UserID, item) {
   const existingItem = await knex("cartitems")
     .where("CartID", cart.CartID)
     .andWhere("ProductID", item.ProductID)
-    .first();
+    .select("*");
 
-  if (existingItem) {
+  if (existingItem.length > 0) {
     const updatedQuantity = existingItem.Quantity + item.Quantity;
     await knex("cartitems")
       .where("CartItemID", existingItem.CartItemID)
@@ -118,28 +112,21 @@ async function getCartItems(UserID) {
     .leftJoin(
       knex("productimages as pi")
         .select("pi.ProductID", "pi.ImageUrl")
-        .where("pi.IsDeleted", false)
-        .orderBy("pi.created_at", "asc")
+        .orderBy("pi.ImageID", "asc")
         .limit(1)
         .as("pi"),
       "p.ProductID",
       "pi.ProductID"
     )
     .where("c.UserID", UserID)
-    .andWhere("ci.IsDeleted", false)
     .select(
       "ci.CartID",
       "ci.CartItemID",
-      "ci.created_at",
-      "ci.CreatedBy",
-      "ci.IsDeleted",
       "ci.ProductID",
-      "p.product_name",
+      "p.ProductName",
       "p.Price",
       "pi.ImageUrl as ImageUrl",
       "ci.Quantity",
-      "ci.UpdatedAt",
-      "ci.UpdatedBy",
       "c.UserID"
     );
 }

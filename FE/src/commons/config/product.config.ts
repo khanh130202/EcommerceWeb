@@ -7,6 +7,11 @@ export const ROUTER_PRODUCT = [
     component: () => import('@app/views/detail/DetailView.vue')
   },
   {
+    path: '/manage-product',
+    name: 'ManageProduct',
+    component: () => import('@app/views/post/ProductView.vue')
+  },
+  {
     path: '/search/:keyword',
     name: 'Search',
     component: () => import('@app/views/search/SearchView.vue')
@@ -19,9 +24,9 @@ export const API = {
   DETAIL: (id: string) => `${FUNC_NAME}/${id}`,
   LIST_IMAGE: (id: string) => `productImages/${id}`,
   GetAllFavorite: `favorites`,
-  CheckFavorite: (product_id: any) => `favorites/check-favorite/${product_id}`,
-  AddFavorite: (product_id: any) => `favorites/${product_id}`,
-  DeleteFavorite: (product_id: any) => `favorites/${product_id}`,
+  CheckFavorite: (ProductID: any) => `favorites/check-favorite/${ProductID}`,
+  AddFavorite: (ProductID: any) => `favorites/${ProductID}`,
+  DeleteFavorite: (ProductID: any) => `favorites/${ProductID}`,
   CheckProductAvailability: `${FUNC_NAME}/check-availability`,
   CREATE: `/${FUNC_NAME}`,
   UPDATE: (id: string) => `${FUNC_NAME}/${id}`,
@@ -40,29 +45,29 @@ export const tableConfig = {
 
 export const colConfig = [
   {
-    key: 'product_name',
+    key: 'ProductName',
     title: "Tên sản phẩm"
   },
   {
-    key: 'category_name',
+    key: 'CategoryName',
     title: "Tên danh mục"
   },
   {
-    key: 'price',
+    key: 'Price',
     title: "Giá",
     is_sort: true,
   },
   {
-    key: 'quantity',
+    key: 'StockQuantity',
     title: "Số lượng",
     is_sort: true,
   },
   {
-    key: 'created_at',
+    key: 'CreatedAt',
     title: "Ngày tạo"
   },
   {
-    key: 'created_name',
+    key: 'CreatedName',
     title: "Người tạo"
   },
 ]

@@ -6,69 +6,51 @@
           <template #label>
             <div class="cell-item" style="width: 150px">Tên người tạo</div>
           </template>
-          {{ product.created_name }}
+          {{ product.CreatedName }}
         </el-descriptions-item>
         <el-descriptions-item>
           <template #label>
             <div class="cell-item" style="width: 150px">Tên sản phẩm</div>
           </template>
-          {{ product.product_name }}
+          {{ product.ProductName }}
         </el-descriptions-item>
         <el-descriptions-item>
           <template #label>
             <div class="cell-item">Tên danh mục</div>
           </template>
-          {{ product.category_name }}
-        </el-descriptions-item>
-        <el-descriptions-item>
-          <template #label>
-            <div class="cell-item">Tiêu đề</div>
-          </template>
-          {{ product.title }}
+          {{ product.CategoryName }}
         </el-descriptions-item>
         <el-descriptions-item>
           <template #label>
             <div class="cell-item">Mô tả</div>
           </template>
-          {{ product.description }}
-        </el-descriptions-item>
-        <el-descriptions-item>
-          <template #label>
-            <div class="cell-item">Tình trạng</div>
-          </template>
-          {{ product.condition }}
+          {{ product.Description }}
         </el-descriptions-item>
         <el-descriptions-item>
           <template #label>
             <div class="cell-item">Giá</div>
           </template>
-          {{ number.formatCurrency(product.price) }}
+          {{ number.formatCurrency(product.Price) }}
         </el-descriptions-item>
         <el-descriptions-item>
           <template #label>
             <div class="cell-item">Số lượng</div>
           </template>
-          {{ number.formatNumberWithDots(product.quantity) }}
-        </el-descriptions-item>
-        <el-descriptions-item>
-          <template #label>
-            <div class="cell-item">Trạng thái sản phẩm</div>
-          </template>
-          {{ product.product_status_name }}
+          {{ number.formatNumberWithDots(product.StockQuantity) }}
         </el-descriptions-item>
         <el-descriptions-item>
           <template #label>
             <div class="cell-item">Ngày tạo</div>
           </template>
-          {{ dateTime.formatDateTimeNew(product.created_at) }}
+          {{ dateTime.formatDateTimeNew(product.CreatedAt) }}
         </el-descriptions-item>
         <el-descriptions-item>
           <template #label>
             <div class="cell-item">Hình ảnh</div>
           </template>
           <vc-row :gutter="20">
-            <vc-col v-for="(image, index) in product.image_urls" :key="index" :span="6">
-              <el-image style="width: 100px; height: 100px" :src="getImageUrl(image.image_url)" fit="cover">
+            <vc-col v-for="(image, index) in product.ImageUrls" :key="index" :span="6">
+              <el-image style="width: 100px; height: 100px" :src="getImageUrl(image.ImageUrl)" fit="cover">
                 <template #error>
                   <div class="image-slot">
                     <el-icon><icon-picture /></el-icon>
@@ -82,43 +64,27 @@
       <el-form ref="productForm" :model="product" :rules="rules" label-position="right" style="padding: 12px 16px"
         require-asterisk-position="right" v-else>
         <vc-row :gutter="20">
-          <vc-col :span="type != POPUP_TYPE.CREATE ? 12 : 24">
-            <vc-input-group required prop="product_name" label="Tên sản phẩm">
-              <vc-input v-model="product.product_name" placeholder="Nhập tên sản phẩm" maxlength="250" />
-            </vc-input-group>
-          </vc-col>
-          <vc-col v-if="type != POPUP_TYPE.CREATE" :span="12">
-            <vc-input-group required prop="product_status_id" label='Trạng thái sản phẩm'>
-              <el-select v-model="product.product_status_id" placeholder="Chọn trạng thái sản phẩm">
-                <el-option v-for="item in dataGridMasterCode" :key="item.master_code_id" :label="item.value"
-                  :value="item.master_code_id" />
-              </el-select>
-            </vc-input-group>
-          </vc-col>
-        </vc-row>
-        <vc-row :gutter="20">
           <vc-col :span="12">
-            <vc-input-group required prop="category_id" label="Danh mục">
-              <el-tree-select v-model="product.category_id" :data="dataTree" check-strictly :render-after-expand="false"
+            <vc-input-group required prop="ProductName" label="Tên sản phẩm">
+              <vc-input v-model="product.ProductName" placeholder="Nhập tên sản phẩm" maxlength="250" />
+            </vc-input-group>
+          </vc-col>
+          <vc-col :span="12">
+            <vc-input-group required prop="CategoryID" label="Danh mục">
+              <el-tree-select v-model="product.CategoryID" :data="dataGrid" check-strictly :render-after-expand="false"
                 show-checkbox check-on-click-node />
             </vc-input-group>
           </vc-col>
-          <vc-col :span="12">
-            <vc-input-group required prop="title" label="Tiêu đề">
-              <vc-input v-model="product.title" placeholder="Nhập tiêu đề sản phẩm" maxlength="250" />
-            </vc-input-group>
-          </vc-col>
         </vc-row>
         <vc-row :gutter="20">
           <vc-col :span="12">
-            <vc-input-group prop="price" label="Giá (nếu quyên góp thì nhập 0)">
-              <vc-input v-model="product.price" placeholder="Nhập giá (nếu quyên góp thì nhập 0)" type="number"
-                @change="validatePrice" />
+            <vc-input-group prop="Price" label="Giá">
+              <vc-input v-model="product.Price" placeholder="Nhập giá" type="number" @change="validatePrice" />
             </vc-input-group>
           </vc-col>
           <vc-col :span="12">
-            <vc-input-group prop="quantity" label="Số lượng">
-              <vc-input v-model="product.quantity" placeholder="Nhập số lượng" type="number"
+            <vc-input-group prop="StockQuantity" label="Số lượng">
+              <vc-input v-model="product.StockQuantity" placeholder="Nhập số lượng" type="number"
                 @change="validateQuantity" />
             </vc-input-group>
           </vc-col>
@@ -137,29 +103,22 @@
           </vc-col>
         </vc-row>
         <vc-row :gutter="20" v-if="props.type == POPUP_TYPE.EDIT">
-          <vc-col v-for="(image, index) in product.image_urls" :key="index" :span="4">
-            <el-image style="width: 100px; height: 100px" :src="getImageUrl(image.image_url)" fit="cover">
+          <vc-col v-for="(image, index) in product.ImageUrls" :key="index" :span="4">
+            <el-image style="width: 100px; height: 100px" :src="getImageUrl(image.ImageUrl)" fit="cover">
               <template #error>
                 <div class="image-slot">
                   <el-icon><icon-picture /></el-icon>
                 </div>
               </template>
             </el-image>
-            <vc-button type="danger" size="small" class="btn-acttion" @click="onDeleteImage(image.product_image_id)"
+            <vc-button type="danger" size="small" class="btn-acttion" @click="onDeleteImage(image.ImageID)"
               :icon="'Delete'"></vc-button>
           </vc-col>
         </vc-row>
         <vc-row :gutter="20">
           <vc-col :span="24">
-            <vc-input-group prop="condition" label="Tình trạng">
-              <vc-input v-model="product.condition" placeholder="Nhập tình trạng sản phẩm" type="textarea" />
-            </vc-input-group>
-          </vc-col>
-        </vc-row>
-        <vc-row :gutter="20">
-          <vc-col :span="24">
-            <vc-input-group prop="description" label="Mô tả">
-              <Ckeditor v-model="product.description" :type="props.type" />
+            <vc-input-group prop="Description" label="Mô tả">
+              <Ckeditor v-model="product.Description" :type="props.type" />
             </vc-input-group>
           </vc-col>
         </vc-row>
@@ -187,7 +146,6 @@ import productService from '@app/services/product.service'
 import { POPUP_TYPE } from '@/commons/const'
 import dateTime from '@/utils/dateTime'
 import { useCategoryStore } from '@app/stores/category.store'
-import { useMasterCodeStore } from '@app/stores/masterCode.store'
 import { useToastStore } from '@/stores/toast.store'
 import type { FormInstance, UploadInstance } from 'element-plus'
 import number from '@/utils/number'
@@ -199,23 +157,11 @@ import Ckeditor from './Ckeditor.vue';
  */
 const toastStore = useToastStore()
 const rules = reactive({
-  product_name: [
+  ProductName: [
     { label: 'Tên sản phẩm', required: true, validator: validate.required, trigger: ['blur'] },
     { label: 'Tên sản phẩm', validator: validate.maxLengthRule, trigger: ['blur'], max: 255 }
   ],
-  title: [
-    { label: 'Tiêu đề sản phẩm', required: true, validator: validate.required, trigger: ['blur'] },
-    { label: 'Tiêu đề sản phẩm', validator: validate.maxLengthRule, trigger: ['blur'], max: 255 }
-  ],
-  product_status_id: [
-    {
-      label: 'Trạng thái sản phẩm',
-      required: true,
-      validator: validate.required,
-      trigger: ['change']
-    }
-  ],
-  category_id: [
+  CategoryID: [
     { label: 'Danh mục', required: true, validator: validate.required, trigger: ['change'] }
   ]
 })
@@ -229,32 +175,26 @@ const isLoading = ref(false)
 const confirmDialog = ref<any>(null)
 const modal = ref<any>(null)
 const modalTitle = ref<any>(null)
-const image_selected = ref<any>([])
+const ImageSelected = ref<any>([])
 let callback = (value: any) => {
   return value
 }
 const storeCategory = useCategoryStore()
-const storeMasterCode = useMasterCodeStore()
-const { dataTree } = storeToRefs(storeCategory)
-const { dataGrid: dataGridMasterCode } = storeToRefs(storeMasterCode)
+const { dataGrid } = storeToRefs(storeCategory)
 const upload = ref<UploadInstance>()
 
 const product = reactive({
-  product_id: '',
-  product_name: null,
-  category_id: '',
-  category_name: '',
-  product_status_id: '',
-  product_status_name: '',
-  title: '',
-  price: null as any,
-  quantity: null as any,
-  url_image: null,
-  description: null,
-  condition: '',
-  created_at: '',
-  created_name: '',
-  image_urls: [] as any
+  ProductID: '',
+  ProductName: null,
+  CategoryID: '',
+  CategoryName: '',
+  Price: null as any,
+  StockQuantity: null as any,
+  ImageUrl: null,
+  Description: null,
+  CreatedAt: '',
+  CreatedName: '',
+  ImageUrls: [] as any
 })
 
 /**
@@ -262,8 +202,7 @@ const product = reactive({
  */
 // onMounted function
 onMounted(async () => {
-  await storeCategory.getTree()
-  await storeMasterCode.getList(MASTER_CODE.PRODUCT_STATUS)
+  await storeCategory.getList()
 })
 
 /**
@@ -271,13 +210,13 @@ onMounted(async () => {
  */
 const validateQuantity = (val: any) => {
   if (val < 1) {
-    product.quantity = 1
+    product.Quantity = 1
   }
 }
 
 const validatePrice = (val: any) => {
   if (val < 0) {
-    product.price = 0
+    product.Price = 0
   }
 }
 
@@ -287,7 +226,7 @@ const onSave = async (formEl: FormInstance | undefined) => {
   await formEl.validate(async (valid) => {
     if (!valid) return
 
-    if (image_selected.value.length <= 1 && props.type == POPUP_TYPE.CREATE) {
+    if (ImageSelected.value.length <= 1 && props.type == POPUP_TYPE.CREATE) {
       toastStore.push({
         type: 'error',
         message: 'Vui lòng chọn 2 hình ảnh'
@@ -296,21 +235,20 @@ const onSave = async (formEl: FormInstance | undefined) => {
     }
     isLoading.value = true
     const formData = new FormData()
-    formData.append('product_name', product.product_name ?? '')
+    formData.append('ProductName', product.ProductName ?? '')
     formData.append('title', product.title ?? '')
-    formData.append('category_id', product.category_id ?? '')
-    formData.append('price', product.price ?? '')
-    formData.append('quantity', product.quantity ?? '')
-    if (image_selected.value.length != 0) {
-      image_selected.value.forEach((file: any) => {
+    formData.append('CategoryID', product.CategoryID ?? '')
+    formData.append('Price', product.Price ?? '')
+    formData.append('Quantity', product.Quantity ?? '')
+    if (ImageSelected.value.length != 0) {
+      ImageSelected.value.forEach((file: any) => {
         formData.append('productImages', file.raw)
       })
     }
-    formData.append('description', product.description ?? '')
-    formData.append('condition', product.condition ?? '')
+    formData.append('Description', product.Description ?? '')
 
-    if (product.product_id) {
-      await productService.update(product.product_id, formData).finally(() => {
+    if (product.ProductID) {
+      await productService.update(product.ProductID, formData).finally(() => {
         isLoading.value = false
       })
     } else {
@@ -325,33 +263,30 @@ const onSave = async (formEl: FormInstance | undefined) => {
 
 const open = async (title: any, item: any, product_status_id: any, _callback: any) => {
   let productInfo = {
-    product_id: '',
-    product_name: null,
-    category_id: '',
-    category_name: '',
-    product_status_id: '',
-    product_status_name: '',
-    title: '',
-    price: null as any,
-    quantity: null as any,
-    url_image: null,
-    description: null,
+    ProductID: '',
+    ProductName: null,
+    CategoryID: '',
+    CategoryName: '',
+    Price: null as any,
+    Quantity: null as any,
+    ImageUrl: null,
+    Description: null,
     condition: '',
-    created_at: '',
-    created_name: '',
-    image_urls: [] as any
+    CreatedAt: '',
+    CreatedName: '',
+    ImageUrls: [] as any
   } as any
   modalTitle.value = title
 
   if (item) {
-    productInfo = (await productService.detail(item, product_status_id)).data?.product
+    productInfo = (await productService.detail(item)).data?.product
   }
   callback = _callback
 
   Object.assign(product, productInfo)
   modal.value.open()
   if (item) {
-    product.image_urls = (await productService.getListImage(item)).data?.result
+    product.ImageUrls = (await productService.getListImage(item)).data?.result
   }
 }
 
@@ -366,12 +301,12 @@ const close = () => {
 }
 
 const handleFileChange = (file: any, fileList: any) => {
-  image_selected.value = fileList
+  ImageSelected.value = fileList
 }
 
 // onDeleteImage
-const onDeleteImage = (product_image_id: any) => {
-  if (product.image_urls.length <= 2) {
+const onDeleteImage = (ImageID: any) => {
+  if (product.ImageUrls.length <= 2) {
     toastStore.push({
       type: 'error',
       message: 'Phải có ít nhất một hình ảnh'
@@ -380,9 +315,9 @@ const onDeleteImage = (product_image_id: any) => {
   }
   confirmDialog.value.confirm('Xác nhận xóa', 'Bạn muốn xóa hình ảnh?', async (res: any) => {
     if (res) {
-      await productService.deleteImage(product_image_id)
-      product.image_urls =
-        (await productService.getListImage(product.product_id)).data?.result ?? []
+      await productService.deleteImage(ImageID)
+      product.ImageUrls =
+        (await productService.getListImage(product.ProductID)).data?.result ?? []
     }
   })
 }

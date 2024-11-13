@@ -12,7 +12,7 @@
         </div>
 
         <el-menu-item v-if="loggedIn" index="2" @click="onCart">
-            <el-badge :value="cartStore.total_quantity" class="item">
+            <el-badge :value="cartStore.TotalQuantity" class="item">
                 <el-icon>
                     <ShoppingCart />
                 </el-icon>
@@ -35,12 +35,9 @@
         </el-menu-item>
 
         <el-sub-menu index="7" v-if="loggedIn">
-            <template #title>{{ account.display_name }}</template>
+            <template #title>{{ account.FullName }}</template>
             <el-menu-item index="7-1" @click="onProfile">
                 Thông tin tài khoản
-            </el-menu-item>
-            <el-menu-item index="7-2" @click="onFavorite">
-                Sản phẩm yêu thích
             </el-menu-item>
             <el-menu-item index="7-3" @click="onLogout">Đăng xuất</el-menu-item>
 
@@ -59,13 +56,7 @@
         <el-sub-menu index="9" v-if="loggedIn">
             <template #title>Tiện ích</template>
             <el-menu-item index="9-1" @click="onPostSale">
-                Tin đăng rao bán
-            </el-menu-item>
-            <el-menu-item index="9-2" @click="onPostCharity">
-                Tin đăng quyên góp
-            </el-menu-item>
-            <el-menu-item index="9-3" @click="onPostIntroduction">
-                Tin đăng quảng cáo
+                Quản lí sản phẩm
             </el-menu-item>
             <el-menu-item index="9-4" @click="onRevenue">
                 Thống kê
@@ -179,7 +170,7 @@ const onPurchaseOrder = () => {
 
 const onPostSale = () => {
     router.push({
-        name: 'PostSale'
+        name: 'ManageProduct'
     })
     keyword.value = ''
 }

@@ -22,7 +22,7 @@
 <script setup lang="ts">/**
 * Dependencies injection library
 */
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import ProductCard from '@/components/ProductCard.vue';
 import { useProductStore } from '@app/stores/product.store'
 import { storeToRefs } from 'pinia'
@@ -34,7 +34,7 @@ import { useActiveStore } from '@/stores/active.store'
  */
 const activeStore = useActiveStore()
 const route = useRoute()
-const keyword = route.params.keyword
+const keyword = ref<any>('')
 const productStore = useProductStore()
 const { products, pageConfig, search } = storeToRefs(productStore)
 const breadcrumbItems = ref<any>([
@@ -45,11 +45,13 @@ const breadcrumbItems = ref<any>([
  * Life circle vue js
  */
 
+watch(route, async (newValue, oldValue) => {
+    await loadData()
+})
+
 onMounted(async () => {
     activeStore.set('')
-    search.value = keyword
     await loadData()
-    search.value = ''
 })
 
 
@@ -57,7 +59,10 @@ onMounted(async () => {
  * Function
  */
 const loadData = async () => {
+    search.value = route.params.keyword
+    keyword.value = search.value
     await productStore.getList()
+    search.value = ''
 }
 
 const changed = async (page: any) => {

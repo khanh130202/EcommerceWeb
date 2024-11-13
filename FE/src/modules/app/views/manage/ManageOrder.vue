@@ -13,25 +13,18 @@
                                 :value="item.master_code_id" />
                         </el-select>
                     </vc-col>
-                    <vc-col :span="6">
-                        <el-select v-model="selectedPaymentMethod" placeholder="Chọn phương thức thanh toán"
-                            @change="loadData()">
-                            <el-option v-for="(item, index) in paymentMethods" :key="index" :label="item.value"
-                                :value="item.master_code_id" />
-                        </el-select>
-                    </vc-col>
                 </vc-row>
             </template>
             <el-table :data="orders" :loading="loading">
                 <template #empty>
                     Không có đơn hàng nào
                 </template>
-                <el-table-column label="Tên người nhận" prop="recipient_name" />
-                <el-table-column label="Ngày mua" prop="created_at" />
-                <el-table-column label="Trạng thái" prop="order_status" />
+                <el-table-column label="Tên người nhận" prop="RecipientName" />
+                <el-table-column label="Ngày mua" prop="CreatedAt" />
+                <el-table-column label="Trạng thái" prop="OrderStatus" />
                 <el-table-column label="Phương thức thanh toán" prop="payment_method" />
-                <el-table-column label="Tổng tiền" prop="total_amount" />
-                <el-table-column label="Ghi chú" prop="note" />
+                <el-table-column label="Tổng tiền" prop="TotalAmount" />
+                <el-table-column label="Ghi chú" prop="Note" />
                 <el-table-column label="Action">
                     <template #default="scope">
                         <vc-button :icon="'View'" type="warning" @click="onView(scope.row)" />
@@ -61,17 +54,13 @@ import { storeToRefs } from 'pinia'
 import { useActiveStore } from '@/stores/active.store'
 import { onMounted, ref } from 'vue'
 import { useOrderStore } from '@app/stores/order.store'
-import { ORDER_STATUS, MASTER_CODE } from "@/commons/const";
 import DetailModal from './DetailView.vue'
 import orderService from '../../services/order.service'
 import { useAuthStore } from '@/modules/auth/stores/auth.store';
-import { useMasterCodeStore } from '@app/stores/masterCode.store'
 
 /**
  * Variable define
  */
-const storeMasterCode = useMasterCodeStore();
-const { dataGrid: dataGridMasterCode } = storeToRefs(storeMasterCode)
 const authStore = useAuthStore()
 const { loggedIn, account } = storeToRefs(authStore)
 const detailRef = ref<any>(null);
@@ -94,10 +83,6 @@ onMounted(async () => {
         { text: 'Đơn bán' }
     ]
     activeStore.set('8-2')
-    await storeMasterCode.getList(MASTER_CODE.ORDER_STATUS)
-    orderStatuses.value = [{ master_code_id: 0, value: 'Tất cả' }, ...dataGridMasterCode.value]
-    await storeMasterCode.getList(MASTER_CODE.PAYMENT_METHOD)
-    paymentMethods.value = [{ master_code_id: 0, value: 'Tất cả' }, ...dataGridMasterCode.value]
     await loadData()
 })
 
@@ -106,7 +91,7 @@ onMounted(async () => {
  */
 const loadData = async () => {
     if (loggedIn.value) {
-        await orderStore.getList(null, account.value.user_id, selectedStatus.value, selectedPaymentMethod.value)
+        await orderStore.getList(null, account.value.UserID, selectedStatus.value, selectedPaymentMethod.value)
     }
 }
 
@@ -117,14 +102,14 @@ const changed = async (page: any) => {
 
 // onView
 const onView = (item: any) => {
-    detailRef.value.open("Chi tiết", item.order_id, false, true, async (res: any) => {
+    detailRef.value.open("Chi tiết", item.OrderID, false, true, async (res: any) => {
         if (res) await loadData()
     })
 };
 
 // onOrderDetail
 const onOrderDetail = (item: any) => {
-    detailRef.value.open("Đơn hàng chi tiết", item.order_id, true)
+    detailRef.value.open("Đơn hàng chi tiết", item.OrderID, true)
 };
 
 // onDeleteItem

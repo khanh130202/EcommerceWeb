@@ -21,9 +21,9 @@ export const API = {
   CREATE: `/${FUNC_NAME}`,
   DETAIL: (id: string) => `${FUNC_NAME}/${id}`,
   PAYMENT_MOMO: (cartTotalAmount: string) => `${FUNC_NAME}/PaymentMomo/${cartTotalAmount}`,
-  ORDER_DETAIL: (order_id: string) => `orderitems/${order_id}`,
+  ORDER_DETAIL: (OrderID: string) => `orderitems/${OrderID}`,
   CHANGE_STATUS: (id: string) => `${FUNC_NAME}/${id}`,
-  CHECK_PURCHASE: (product_id: string) => `orderItems/check-purchase/${product_id}`,
+  CHECK_PURCHASE: (ProductID: string) => `orderItems/check-purchase/${ProductID}`,
   UPDATE: (id: string) => `${FUNC_NAME}/${id}`,
   DELETE: (id: string) => `${FUNC_NAME}/${id}`,
 }

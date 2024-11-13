@@ -32,11 +32,11 @@ export const useRevenueStore = defineStore('useRevenueStore', {
      * Action
      */
     // Get list revenue
-    async getRevenue(user_id: any, revenue_type: any, selectedDate: any) {
+    async getRevenue(UserID: any, revenue_type: any, selectedDate: any) {
       this.loading = true
       await revenueService
         .getRevenue({
-          user_id: user_id,
+          UserID: UserID,
           revenue_type: revenue_type,
           selectedDate: selectedDate,
         })
@@ -58,12 +58,12 @@ export const useRevenueStore = defineStore('useRevenueStore', {
         })
     },
 
-    async revenueDataChart(user_id?: any) {
+    async revenueDataChart(UserID?: any) {
       this.loading = true
 
       await revenueService
         .revenueDataChart({
-          user_id: user_id,
+          UserID: UserID,
           startDate: this.dateRange[0],
           endDate: this.dateRange[1],
         })

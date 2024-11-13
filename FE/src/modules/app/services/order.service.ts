@@ -24,8 +24,8 @@ const orderService = {
   },
 
   // Check purchase
-  async checkPurchase(product_id: string): Promise<APIResponse<any>> {
-    return await apiClient.get(API.CHECK_PURCHASE(product_id))
+  async checkPurchase(ProductID: string): Promise<APIResponse<any>> {
+    return await apiClient.get(API.CHECK_PURCHASE(ProductID))
   },
 
   // Get order detail
@@ -59,7 +59,7 @@ const orderService = {
   async update(data: any) {
     const toastStore = useToastStore()
     return await apiClient
-      .put(API.UPDATE(data.order_id), data)
+      .put(API.UPDATE(data.OrderID), data)
       .then((response: any) => {
         toastStore.fromApiResponse(response)
         return response
@@ -70,7 +70,7 @@ const orderService = {
   async delete(data: any) {
     const toastStore = useToastStore()
     return await apiClient
-      .delete(API.DELETE(data.order_id))
+      .delete(API.DELETE(data.OrderID))
       .then((response: any) => {
         toastStore.fromApiResponse(response)
         return response

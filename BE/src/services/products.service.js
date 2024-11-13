@@ -70,15 +70,18 @@ async function insertImages(ProductID, fileNames) {
 }
 
 async function getManyProducts(query) {
-  const { ProductName, page = 1, limit = 5, sort } = query;
+  const { search, CategoryID, page = 1, limit = 5, sort } = query;
   const paginator = new Paginator(page, limit);
 
   const queryBuilder = productRepository()
     .from("products as p")
     .where("p.IsDeleted", false)
     .where((builder) => {
-      if (ProductName) {
-        builder.where("p.ProductName", "like", `%${ProductName}%`);
+      if (search) {
+        builder.where("p.ProductName", "like", `%${search}%`);
+      }
+      if (CategoryID) {
+        builder.where("p.CategoryID", "=", CategoryID);
       }
     })
     .select(
@@ -89,13 +92,13 @@ async function getManyProducts(query) {
       "p.Description",
       "p.Price",
       "p.StockQuantity",
-      "u.FullName as created_name",
+      "u.FullName as CreatedName",
       "p.CreatedAt",
       "p.UpdatedAt",
       "pi.ImageUrl"
     )
     .leftJoin("categories as c", "p.CategoryID", "c.CategoryID")
-    .leftJoin("users as u", "p.CreatedAt", "u.UserID")
+    .leftJoin("users as u", "p.CreatedBy", "u.UserID")
     .leftJoin(
       knex
         .select("pi.ProductID", "pi.ImageUrl")
@@ -105,6 +108,7 @@ async function getManyProducts(query) {
             "ROW_NUMBER() OVER (PARTITION BY pi.ProductID) as row_num"
           )
         )
+        .orderBy("pi.ImageID", "asc")
         .as("pi"),
       function () {
         this.on(
@@ -135,12 +139,11 @@ async function getManyProducts(query) {
 }
 
 async function getProductById(id) {
-  return productRepository()
+  return await productRepository()
     .from("products as p")
     .where("p.ProductID", id)
     .andWhere("p.IsDeleted", false)
     .select(
-      knex.raw("count(ProductID) OVER() AS recordCount"),
       "p.ProductID",
       "p.CategoryID",
       "c.CategoryName",
@@ -148,12 +151,12 @@ async function getProductById(id) {
       "p.Description",
       "p.Price",
       "p.StockQuantity",
-      "u.FullName as created_name",
+      "u.FullName as CreatedName",
       "p.CreatedAt",
       "p.UpdatedAt"
     )
     .leftJoin("categories as c", "p.CategoryID", "c.CategoryID")
-    .leftJoin("users as u", "p.UserID", "u.UserID")
+    .leftJoin("users as u", "p.CreatedBy", "u.UserID")
     .first();
 }
 

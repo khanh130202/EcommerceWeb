@@ -21,12 +21,13 @@ export const useProductStore = defineStore('useProductStore', {
      * Action
      */
     // Get list product
-    async getList() {
+    async getList(UserId: any = null) {
       this.loading = true
       await productService
         .getList({
           sort: this.goSort,
           search: this.search,
+          UserId: UserId,
           ...this.pageConfig,
           ...this.filterConfig
         })
@@ -38,9 +39,9 @@ export const useProductStore = defineStore('useProductStore', {
               const formatted = dateTime.formatDateTimeNew(item.CreatedAt)
               item.CreatedAt = formatted
             }
-            if (item.quantity) {
-              const formatted = number.formatNumberWithDots(item.quantity)
-              item.quantity = formatted
+            if (item.Quantity) {
+              const formatted = number.formatNumberWithDots(item.Quantity)
+              item.Quantity = formatted
             }
             return item
           })

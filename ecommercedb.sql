@@ -24,10 +24,10 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `cart`
+-- Cấu trúc bảng cho bảng `carts`
 --
 
-CREATE TABLE `cart` (
+CREATE TABLE `carts` (
   `CartID` int(11) NOT NULL,
   `UserID` int(11) DEFAULT NULL,
   `CreatedBy` int(11) DEFAULT NULL,
@@ -182,9 +182,9 @@ CREATE TABLE `users` (
 --
 
 --
--- Chỉ mục cho bảng `cart`
+-- Chỉ mục cho bảng `carts`
 --
-ALTER TABLE `cart`
+ALTER TABLE `carts`
   ADD PRIMARY KEY (`CartID`),
   ADD KEY `UserID` (`UserID`);
 
@@ -257,9 +257,9 @@ ALTER TABLE `users`
 --
 
 --
--- AUTO_INCREMENT cho bảng `cart`
+-- AUTO_INCREMENT cho bảng `carts`
 --
-ALTER TABLE `cart`
+ALTER TABLE `carts`
   MODIFY `CartID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
@@ -315,16 +315,16 @@ ALTER TABLE `users`
 --
 
 --
--- Các ràng buộc cho bảng `cart`
+-- Các ràng buộc cho bảng `carts`
 --
-ALTER TABLE `cart`
+ALTER TABLE `carts`
   ADD CONSTRAINT `cart_ibfk_1` FOREIGN KEY (`UserID`) REFERENCES `users` (`UserID`) ON DELETE CASCADE;
 
 --
 -- Các ràng buộc cho bảng `cartitems`
 --
 ALTER TABLE `cartitems`
-  ADD CONSTRAINT `cartitems_ibfk_1` FOREIGN KEY (`CartID`) REFERENCES `cart` (`CartID`) ON DELETE CASCADE,
+  ADD CONSTRAINT `cartitems_ibfk_1` FOREIGN KEY (`CartID`) REFERENCES `carts` (`CartID`) ON DELETE CASCADE,
   ADD CONSTRAINT `cartitems_ibfk_2` FOREIGN KEY (`ProductID`) REFERENCES `products` (`ProductID`) ON DELETE CASCADE;
 
 --

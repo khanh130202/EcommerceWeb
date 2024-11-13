@@ -321,21 +321,21 @@ onMounted(async () => {
         { text: 'Thống kê' }
     ]
     if (loggedIn.value) {
-        await onRevenue(account.value.user_id);
-        await storePost.getList(account.value.user_id, null);
-        await storeRating.getList(null, account.value.user_id);
-        await storeProduct.getList(account.value.user_id, null);
-        await storeOrder.getList(null, account.value.user_id);
-        await storeRevenue.revenueDataChart(account.value.user_id);
+        await onRevenue(account.value.UserID);
+        await storePost.getList(account.value.UserID, null);
+        await storeRating.getList(null, account.value.UserID);
+        await storeProduct.getList(account.value.UserID, null);
+        await storeOrder.getList(null, account.value.UserID);
+        await storeRevenue.revenueDataChart(account.value.UserID);
     }
 })
 
 /**
  * Function
  */
-const onRevenue = async (user_id: any) => {
+const onRevenue = async (UserID: any) => {
     if (selectedDate.value) {
-        await storeRevenue.getRevenue(user_id, revenue_type.value, selectedDate.value)
+        await storeRevenue.getRevenue(UserID, revenue_type.value, selectedDate.value)
         dataGrid.value = SalesDatas.value
     }
 }

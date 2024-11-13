@@ -29,7 +29,6 @@ import ProductCard from '@/components/ProductCard.vue';
 import { useActiveStore } from '@/stores/active.store'
 import { useProductStore } from '@app/stores/product.store'
 import { storeToRefs } from 'pinia'
-import { useCategoryStore } from '@app/stores/category.store'
 
 /**
  * Variable define
@@ -38,9 +37,6 @@ const productStore = useProductStore()
 const { products, pageConfig, filterConfig } = storeToRefs(productStore)
 const activeStore = useActiveStore()
 const route = useRoute()
-const categoryStore = useCategoryStore()
-const { dataTree } = storeToRefs(categoryStore)
-
 const breadcrumbItems = ref<any>([])
 const title = ref<any>('')
 
@@ -59,9 +55,8 @@ onMounted(async () => {
  * Function
  */
 const loadData = async () => {
-    filterConfig.value.category_id = route.query.id
+    filterConfig.value.CategoryID = route.query.id
     await productStore.getList()
-    await categoryStore.getTree()
 }
 
 const onInit = async () => {

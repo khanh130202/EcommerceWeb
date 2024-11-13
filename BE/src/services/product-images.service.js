@@ -68,9 +68,8 @@ async function getManyProductImages(query) {
 }
 
 async function getProductImagesByProductId(id) {
-  return productImageRepository()
+  return await productImageRepository()
     .where("ProductID", id)
-    .andWhere("IsDeleted", false)
     .select("*");
 }
 

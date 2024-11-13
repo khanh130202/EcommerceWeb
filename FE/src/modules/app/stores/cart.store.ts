@@ -6,17 +6,17 @@ export const useCartStore = defineStore("useCartStore", {
         items: <any>[],
     }),
     getters: {
-        total_quantity: (state: any) => {
+        TotalQuantity: (state: any) => {
             if (!Array.isArray(state.items)) {
                 return 0;
             }
-            return state.items.reduce((total: any, item: any) => total + item.quantity, 0);
+            return state.items.reduce((total: any, item: any) => total + item.Quantity, 0);
         },
-        total_amount: (state) => {
+        TotalAmount: (state) => {
             if (!Array.isArray(state.items)) {
                 return 0;
             }
-            return state.items.reduce((total: any, item: any) => total + (item.price * item.quantity), 0);
+            return state.items.reduce((total: any, item: any) => total + (item.Price * item.Quantity), 0);
         },
     },
 
@@ -30,22 +30,22 @@ export const useCartStore = defineStore("useCartStore", {
             }
         },
 
-        async addToCart(product: any, quantity = 1) {
-            const existingItem = this.items.find((i: any) => i.product_id === product.product_id);
+        async addToCart(product: any, Quantity = 1) {
+            const existingItem = this.items.find((i: any) => i.ProductID === product.ProductID);
             if (existingItem) {
-                existingItem.quantity += quantity;
+                existingItem.Quantity += Quantity;
                 await this.updateCartItem(existingItem);
             } else {
-                const newItem = { product_id: product.product_id, quantity };
+                const newItem = { ProductID: product.ProductID, Quantity };
                 await this.createCartItem(newItem);
             }
             await this.fetchCartItems();
         },
 
-        async changeQuantity(productId: any, quantity: any) {
-            const item = this.items.find((i: any) => i.product_id === productId);
+        async changeQuantity(productId: any, Quantity: any) {
+            const item = this.items.find((i: any) => i.ProductID === productId);
             if (item) {
-                item.quantity = quantity;
+                item.Quantity = Quantity;
                 await this.updateCartItem(item);
             }
             await this.fetchCartItems();
@@ -53,7 +53,7 @@ export const useCartStore = defineStore("useCartStore", {
 
         async removeFromCart(productId: any) {
             await this.deleteCartItem(productId);
-            this.items = this.items.filter((i: any) => i.product_id !== productId);
+            this.items = this.items.filter((i: any) => i.ProductID !== productId);
         },
 
         async emptyCart() {
@@ -70,12 +70,12 @@ export const useCartStore = defineStore("useCartStore", {
         async updateCartItem(item: any) {
             await cartService.update({
                 cart_item_id: item.cart_item_id,
-                quantity: item.quantity
+                Quantity: item.Quantity
             })
         },
 
         async deleteCartItem(productId: any) {
-            const item = this.items.find((i: any) => i.product_id === productId);
+            const item = this.items.find((i: any) => i.ProductID === productId);
             if (item) {
                 await cartService.deleteCartItems(item.cart_item_id)
             }

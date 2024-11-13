@@ -30,6 +30,7 @@ export const useAuthStore = defineStore('useAuthStore', {
     async refresh() {
       this.account = (await authService.getInfo())?.data?.user
       if (this.account) this.loggedIn = true
+      
       return this.account
     },
     logout() {

@@ -7,38 +7,19 @@
       </vc-col>
       <vc-col :md="16">
         <h3 style="margin: 20px 0">
-          {{ data.product_name }} |
-          <span style="color: #777; font-size: 12px">Yêu thích</span>
-          <span v-if="isFavorite != 1" @click="AddFavorite" style="cursor: pointer">🤍</span>
-          <span v-else @click="DeleteFavorite" style="cursor: pointer">❤️</span>
+          {{ data.ProductName }}
         </h3>
-
-        <vc-rate
-          v-model="data.score"
-          :disabled="true"
-          :colors="colorsRating"
-          show-score
-          text-color="#ff9900"
-          :score-template="data.score + ' sao'"
-        />
         <div class="dashed"></div>
 
-        <h3 style="margin: 20px 0" class="product-price">
-          {{ number.formatCurrency(data.price) }}
+        <h3 style="margin: 20px 0" class="product-Price">
+          {{ number.formatCurrency(data.Price) }}
         </h3>
         <div class="dashed"></div>
 
         <div class="dashed"></div>
-        <div v-if="data.quantity && data.quantity > 0">
-          <el-input-number
-            style="margin: 10px 0"
-            v-model="quantity"
-            :min="1"
-            :max="data.quantity"
-            @change="validateQuantity"
-            :value-on-clear="1"
-            :precision="0"
-          />
+        <div v-if="data.StockQuantity && data.StockQuantity > 0">
+          <el-input-number style="margin: 10px 0" v-model="Quantity" :min="1" :max="data.StockQuantity"
+            @change="validateQuantity" :value-on-clear="1" :precision="0" />
           <div class="dashed"></div>
 
           <div style="margin: 20px 0">
@@ -47,92 +28,16 @@
           </div>
         </div>
 
-        <vc-button v-else style="margin: 20px 0" type="warning" plain @click="onContact"
-          >Liên hệ</vc-button
-        >
+        <vc-button v-else style="margin: 20px 0" type="warning" plain disabled>Hết hàng</vc-button>
 
         <div class="dashed"></div>
         <h5 style="margin: 20px 0 10px 0">Mô tả sản phẩm</h5>
         <p>
-          {{ data.description }}
+          {{ data.Description }}
         </p>
       </vc-col>
     </vc-row>
     <hr />
-    <div v-if="checkUserHasPurchased" class="wrapper">
-      <div class="master">
-        <h1 v-if="!submitted">Đánh giá và xếp hạng</h1>
-        <h2 v-if="!submitted">Trải nghiệm của bạn về sản phẩm của chúng tôi như thế nào?</h2>
-
-        <div v-if="!submitted" class="rating-component">
-          <div class="stars-box">
-            <el-rate v-model="form.score" :colors="colorsRating" @change="changeRate" />
-          </div>
-        </div>
-
-        <div v-if="!submitted" class="feedback-tags">
-          <div class="tags-container" v-if="form.score != 0">
-            <div class="question-tag">
-              {{ question }}
-            </div>
-          </div>
-
-          <div class="tags-box">
-            <el-input
-              v-model="form.comment"
-              placeholder="Vui lòng nhập đánh giá của bạn"
-              type="textarea"
-            />
-          </div>
-        </div>
-
-        <div v-if="!submitted" class="button-box" style="margin-top: 10px">
-          <el-button type="success" @click="handleSubmit" plain>Thêm đánh giá</el-button>
-        </div>
-
-        <div v-if="submitted">
-          <div class="success-message">Cảm ơn bạn!</div>
-        </div>
-      </div>
-    </div>
-
-    <div v-if="ratings.length > 0">
-      <div v-for="(comment, index) in ratings" :key="index">
-        <hr style="margin: 10px 0" />
-        <img
-          style="max-width: 40px"
-          :alt="comment.display_name"
-          :src="
-            comment.avatar_url
-              ? getImageUrl(comment.avatar_url)
-              : 'https://lh4.googleusercontent.com/-T3-L8KezLEg/AAAAAAAAAAI/AAAAAAAAAAA/6385upYGISk/s40-c-k/photo.jpg'
-          "
-        />
-        <div>
-          <div>
-            <a style="cursor: 'pointer'; color: 'blue'">
-              {{ comment.display_name }}
-            </a>
-          </div>
-          <div>
-            <span>{{ dateTime.formatDate(comment.created_at) }}</span>
-          </div>
-          <div>
-            <span>
-              <el-rate disabled v-model="comment.score" :colors="colorsRating" />
-            </span>
-            <div>
-              <span>{{ comment.comment }}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div style="margin: 20px 0; float: right; width: 100%">
-        <vc-pagination :pageConfig="pageRatingConfig" @changed="changedPageRatings" />
-      </div>
-      <hr style="margin: 10px 0" />
-    </div>
 
     <vc-card v-if="pageProductConfig.total > 0" style="margin: 20px 0; width: 100%">
       <h2>SẢN PHẨM LIÊN QUAN</h2>
@@ -153,22 +58,16 @@
  * Dependencies injection library
  */
 import number from '@/utils/number'
-import { ref, onMounted, reactive, watch } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import ProductCard from '@/components/ProductCard.vue'
 import productService from '@app/services/product.service'
 import { useRoute, useRouter } from 'vue-router'
-import { useRatingStore } from '@app/stores/rating.store'
 import { storeToRefs } from 'pinia'
 import { useActiveStore } from '@/stores/active.store'
 import { useCartStore } from '@/modules/app/stores/cart.store'
 import { useAuthStore } from '@/modules/auth/stores/auth.store'
 import { useToastStore } from '@/stores/toast.store'
-import { colorsRating } from '@/commons/const'
-import dateTime from '@/utils/dateTime'
-import ratingService from '../../services/rating.service'
-import orderService from '../../services/order.service'
 import { useProductStore } from '@app/stores/product.store'
-import { getImageUrl } from '@/utils/getPathImg'
 
 /**
  * Variable define
@@ -179,34 +78,18 @@ const {
   pageConfig: pageProductConfig,
   filterConfig: filterProductConfig
 } = storeToRefs(productStore)
-const ratingStore = useRatingStore()
-const {
-  ratings,
-  pageConfig: pageRatingConfig,
-  filterConfig: filterRatingsConfig
-} = storeToRefs(ratingStore)
 const authStore = useAuthStore()
 const cartStore = useCartStore()
 const activeStore = useActiveStore()
 const route = useRoute()
 const router = useRouter()
-const product_id = ref<any>('')
+const ProductID = ref<any>('')
 const data = ref<any>(null)
 const images = ref<any>([])
-const isFavorite = ref<any>(-1)
 const relatedProducts = ref<any>([])
 const breadcrumbItems = ref<any>([])
-const quantity = ref<any>(1)
-const checkUserHasPurchased = ref<any>(true)
-const submitted = ref<any>(false)
-const question = ref<any>('')
+const Quantity = ref<any>(1)
 
-const form = reactive({
-  user_id: '',
-  product_id: '',
-  comment: '',
-  score: 0
-})
 /**
  * Life circle vue js
  */
@@ -223,9 +106,9 @@ onMounted(async () => {
  * Function
  */
 const onInit = async () => {
-  product_id.value = route.params.id
+  ProductID.value = route.params.id
   activeStore.set('')
-  data.value = await (await productService.detail(product_id.value)).data?.product
+  data.value = await (await productService.detail(ProductID.value)).data?.product
   if (!data.value) {
     router.push({
       name: 'NotFound'
@@ -233,87 +116,46 @@ const onInit = async () => {
     return
   }
 
-  const response = (await productService.getListImage(product_id.value)).data?.result as any
+  const response = (await productService.getListImage(ProductID.value)).data?.result as any
   response.forEach((element: any) => {
     images.value.push({
-      src: element.image_url
+      src: element.ImageUrl
     })
   })
 
-  filterProductConfig.value.category_id = data.value.category_id
+  filterProductConfig.value.CategoryID = data.value.CategoryID
   await productStore.getList()
 
   relatedProducts.value = products.value.filter((item: any) => {
-    return item.product_id != product_id.value
+    return item.ProductID != ProductID.value
   })
 
   pageProductConfig.value.total = relatedProducts.value.length
 
-  if (authStore.loggedIn) {
-    isFavorite.value =
-      (await productService.CheckFavorite(product_id.value)).data?.isFavorite ?? false
-    const rec = (await orderService.checkPurchase(product_id.value)) as any
-    if (rec == 1) {
-      checkUserHasPurchased.value = true
-    }
-  }
   breadcrumbItems.value = [
     { text: 'Trang chủ', name: 'home' },
     {
-      text: data.value.category_name,
+      text: data.value.CategoryName,
       name: 'Collection',
-      query: { id: data.value.category_id, name: data.value.category_name }
+      query: { id: data.value.CategoryID, name: data.value.CategoryName }
     },
-    { text: data.value.product_name }
+    { text: data.value.ProductName }
   ]
-
-  filterRatingsConfig.value.product_id = product_id.value
-  await ratingStore.getList()
 }
 const validateQuantity = (val: any) => {
   if (val < 1) {
-    quantity.value = 1
+    Quantity.value = 1
   }
 }
 const changedPageProducts = async (page: any) => {
   pageProductConfig.value = { ...page }
   await productStore.getList()
 }
-const changedPageRatings = async (page: any) => {
-  pageRatingConfig.value = { ...page }
-  await ratingStore.getList()
-}
-
-const AddFavorite = async () => {
-  if (authStore.loggedIn) {
-    await productService.AddFavorite(product_id.value)
-    isFavorite.value = 1
-  } else {
-    const toastStore = useToastStore()
-    toastStore.push({
-      type: 'error',
-      message: 'Vui lòng đăng nhập'
-    })
-  }
-}
-
-const DeleteFavorite = async () => {
-  if (authStore.loggedIn) {
-    await productService.DeleteFavorite(product_id.value)
-    isFavorite.value = -1
-  } else {
-    const toastStore = useToastStore()
-    toastStore.push({
-      type: 'error',
-      message: 'Vui lòng đăng nhập'
-    })
-  }
-}
 
 const buyNow = async () => {
   const toastStore = useToastStore()
   if (authStore.loggedIn) {
-    cartStore.addToCart(data.value, quantity.value)
+    cartStore.addToCart(data.value, Quantity.value)
     router.push({
       name: 'Cart'
     })
@@ -333,7 +175,7 @@ const buyNow = async () => {
 const addToCart = () => {
   const toastStore = useToastStore()
   if (authStore.loggedIn) {
-    cartStore.addToCart(data.value, quantity.value)
+    cartStore.addToCart(data.value, Quantity.value)
 
     toastStore.push({
       type: 'success',
@@ -347,89 +189,6 @@ const addToCart = () => {
   }
 }
 
-const changeRate = () => {
-  if (form.score == 1) {
-    question.value = 'Tại sao trải nghiệm của bạn lại tệ đến thế?'
-  }
-  if (form.score == 2) {
-    question.value = 'Tại sao trải nghiệm của bạn lại tệ đến thế?'
-  }
-  if (form.score == 3) {
-    question.value = 'Tại sao trải nghiệm đánh giá trung bình của bạn là gì?'
-  }
-  if (form.score == 4) {
-    question.value = 'Tại sao trải nghiệm của bạn lại tốt?'
-  }
-  if (form.score == 5) {
-    question.value = 'Tuyệt vời ❤️'
-  }
-}
-
-const handleSubmit = async () => {
-  const toastStore = useToastStore()
-  if (form.comment === '') {
-    toastStore.push({
-      type: 'error',
-      message: 'Vui lòng nhập nội dung đánh giá'
-    })
-    return
-  }
-  if (form.score == 0) {
-    toastStore.push({
-      type: 'error',
-      message: 'Vui lòng đánh giá điểm'
-    })
-    return
-  }
-  if (authStore.loggedIn) {
-    form.product_id = product_id.value
-    if (checkUserHasPurchased.value == true) {
-      await ratingService.create(form).then(async (response: any) => {
-        if (response.status == 'success') {
-          await ratingStore.getList()
-          submitted.value = true
-        }
-      })
-    } else {
-      toastStore.push({
-        type: 'error',
-        message: 'Bạn chưa mua sản phẩm này'
-      })
-    }
-  } else {
-    toastStore.push({
-      type: 'error',
-      message: 'Vui lòng đăng nhập'
-    })
-  }
-}
-
-const onContact = async () => {
-  if (!authStore.loggedIn) {
-    const toastStore = useToastStore()
-    toastStore.push({
-      type: 'error',
-      message: 'Vui lòng đăng nhập'
-    })
-    return
-  }
-  if (authStore.account.user_id == data.value.created_by) {
-    const toastStore = useToastStore()
-    toastStore.push({
-      type: 'error',
-      message: 'Bạn không thể gửi tin nhắn cho chính mình'
-    })
-    return
-  }
-  router.push({
-    name: 'Chat',
-    state: { userId: data.value.created_by, productLink: window.location.href }
-  })
-  window.history.replaceState(
-    { userId: data.value.created_by, productLink: window.location.href },
-    ''
-  )
-}
 </script>
 
 <style>
@@ -443,7 +202,7 @@ const onContact = async () => {
   padding: 20px;
 }
 
-.product-price {
+.product-Price {
   margin-bottom: 20px;
   color: #d70018;
   font-weight: 700;

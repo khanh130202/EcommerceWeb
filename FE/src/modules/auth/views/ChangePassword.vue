@@ -43,7 +43,7 @@ const authStore = useAuthStore()
 const changeForm = ref<FormInstance>()
 const router = useRouter();
 const modal = ref<any>(null);
-const user_id = ref<any>('');
+const UserID = ref<any>('');
 const modalTitle = ref<any>('');
 
 const passwordValidate = reactive({
@@ -112,7 +112,7 @@ const rules = reactive({
 
 const open = async (title: any, id: any) => {
     modalTitle.value = title;
-    user_id.value = id
+    UserID.value = id
     modal.value.open();
 };
 
