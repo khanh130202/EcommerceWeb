@@ -1,0 +1,27 @@
+@import "../available";
+
+.el-dialog {
+	padding: 0px !important;
+
+	.el-dialog__header {
+		margin: 0;
+		padding: 8px;
+		border-bottom: 1px solid $-input-border-color;
+		background-color: $-bg-modal-header;
+	}
+
+	.el-dialog__body {
+		padding: 8px;
+		overflow-y: auto;
+		overflow-x: hidden;
+	}
+
+	.btn-fullscreen span i {
+		margin-right: 0px !important;
+	}
+
+	.vc-content-dialog {
+		overflow-y: 'auto';
+		overflow-x: 'hidden';
+	}
+}

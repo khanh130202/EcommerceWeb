@@ -1,0 +1,43 @@
+.el-footer {
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    background-color: #f5f7fa;
+    box-sizing: border-box;
+    padding: 42px 64px 64px !important;
+    height: auto !important;
+}
+
+.footer-main {
+    font-size: 0;
+    display: inline-block;
+    vertical-align: top;
+    margin-right: 130px;
+}
+
+.footer-main-link {
+    display: block;
+    margin: 0;
+    line-height: 2;
+    font-size: 14px;
+    color: #606266;
+}
+
+h4 {
+    font-size: 18px;
+    line-height: 1;
+    margin: 0 0 15px;
+    font-weight: 400;
+}
+
+@media (max-width: 768px) {
+    .footer-main {
+        margin-bottom: 30px;
+    }
+}
+
+@media (max-width: 1140px) {
+    .el-footer {
+        height: auto;
+    }
+}
