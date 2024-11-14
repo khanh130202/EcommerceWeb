@@ -9,8 +9,8 @@
                 <vc-row :gutter="20">
                     <vc-col :span="6">
                         <el-select v-model="selectedStatus" placeholder="Chọn trạng thái đơn hàng" @change="loadData()">
-                            <el-option v-for="(item, index) in orderStatuses" :key="index" :label="item.value"
-                                :value="item.master_code_id" />
+                            <el-option v-for="(item, index) in ORDER_STATUS_ARRAY" :key="index" :label="item.label"
+                                :value="item.label" />
                         </el-select>
                     </vc-col>
                 </vc-row>
@@ -19,10 +19,9 @@
                 <template #empty>
                     Không có đơn hàng nào
                 </template>
-                <el-table-column label="Tên người nhận" prop="RecipientName" />
+                <el-table-column label="Tên người nhận" prop="FullName" />
                 <el-table-column label="Ngày mua" prop="CreatedAt" />
-                <el-table-column label="Trạng thái" prop="OrderStatus" />
-                <el-table-column label="Phương thức thanh toán" prop="payment_method" />
+                <el-table-column label="Trạng thái" prop="Status" />
                 <el-table-column label="Tổng tiền" prop="TotalAmount" />
                 <el-table-column label="Ghi chú" prop="Note" />
                 <el-table-column label="Action">
@@ -33,7 +32,7 @@
                             icon-color="#626AEF" title="Bạn muốn hủy đơn hàng này?"
                             @confirm="confirmCancelOrder(scope.row)">
                             <template #reference>
-                                <vc-button :disabled="scope.row.order_status_id != ORDER_STATUS.PROCESSING"
+                                <vc-button :disabled="scope.row.STATUS != ORDER_STATUS.PROCESSING"
                                     :icon="'Close'" type="danger" />
                             </template>
                         </el-popconfirm>
@@ -56,7 +55,7 @@ import { storeToRefs } from 'pinia'
 import { useActiveStore } from '@/stores/active.store'
 import { onMounted, ref } from 'vue'
 import { useOrderStore } from '@app/stores/order.store'
-import { ORDER_STATUS } from "@/commons/const";
+import { ORDER_STATUS_ARRAY, ORDER_STATUS } from "@/commons/const";
 import DetailModal from './DetailView.vue'
 import orderService from '../../services/order.service'
 import { useAuthStore } from '@/modules/auth/stores/auth.store';
@@ -72,10 +71,7 @@ const { orders, pageConfig, loading } = storeToRefs(orderStore)
 const activeStore = useActiveStore()
 
 const breadcrumbItems = ref<any>([])
-const orderStatuses = ref<any>([]);
-const paymentMethods = ref<any>([]);
-const selectedStatus = ref<any>(0);
-const selectedPaymentMethod = ref<any>(0);
+const selectedStatus = ref<any>(ORDER_STATUS.PROCESSING);
 
 /**
  * Life circle vue js
@@ -95,7 +91,7 @@ onMounted(async () => {
  */
 const loadData = async () => {
     if (loggedIn.value) {
-        await orderStore.getList(account.value.UserID, null, selectedStatus.value, selectedPaymentMethod.value)
+        await orderStore.getList(account.value.UserID, null, selectedStatus.value)
     }
 }
 

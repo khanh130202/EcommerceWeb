@@ -21,33 +21,34 @@ export const useProductStore = defineStore('useProductStore', {
      * Action
      */
     // Get list product
-    async getList(UserId: any = null) {
+    async getList(UserId: any = null, getAll = false) {
       this.loading = true
-      await productService
-        .getList({
-          sort: this.goSort,
-          search: this.search,
-          UserId: UserId,
-          ...this.pageConfig,
-          ...this.filterConfig
+      const config = getAll
+        ? { UserId: UserId, search: this.search, page: 1, size: Number.MAX_SAFE_INTEGER }
+        : {
+            sort: this.goSort,
+            UserId: UserId,
+            search: this.search,
+            ...this.pageConfig,
+            ...this.filterConfig
+          }
+      await productService.getList(config).then((data: any) => {
+        this.products = data.data?.products ?? []
+        this.pageConfig.total = data.data?.metadata.totalRecords
+        this.products = this.products.map((item: any) => {
+          if (item.CreatedAt) {
+            const formatted = dateTime.formatDateTimeNew(item.CreatedAt)
+            item.CreatedAt = formatted
+          }
+          if (item.Quantity) {
+            const formatted = number.formatNumberWithDots(item.Quantity)
+            item.Quantity = formatted
+          }
+          return item
         })
-        .then((data: any) => {
-          this.products = data.data?.products ?? []
-          this.pageConfig.total = data.data?.metadata.totalRecords
-          this.products = this.products.map((item: any) => {
-            if (item.CreatedAt) {
-              const formatted = dateTime.formatDateTimeNew(item.CreatedAt)
-              item.CreatedAt = formatted
-            }
-            if (item.Quantity) {
-              const formatted = number.formatNumberWithDots(item.Quantity)
-              item.Quantity = formatted
-            }
-            return item
-          })
-          this.loading = false
-          this.filterConfig = []
-        })
-    },
+        this.loading = false
+        this.filterConfig = []
+      })
+    }
   }
 })

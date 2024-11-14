@@ -9,8 +9,8 @@
                 <vc-row :gutter="20">
                     <vc-col :span="6">
                         <el-select v-model="selectedStatus" placeholder="Chọn trạng thái đơn hàng" @change="loadData()">
-                            <el-option v-for="(item, index) in orderStatuses" :key="index" :label="item.value"
-                                :value="item.master_code_id" />
+                            <el-option v-for="(item, index) in ORDER_STATUS_ARRAY" :key="index" :label="item.label"
+                                :value="item.label" />
                         </el-select>
                     </vc-col>
                 </vc-row>
@@ -19,10 +19,9 @@
                 <template #empty>
                     Không có đơn hàng nào
                 </template>
-                <el-table-column label="Tên người nhận" prop="RecipientName" />
+                <el-table-column label="Tên người nhận" prop="FullName" />
                 <el-table-column label="Ngày mua" prop="CreatedAt" />
-                <el-table-column label="Trạng thái" prop="OrderStatus" />
-                <el-table-column label="Phương thức thanh toán" prop="payment_method" />
+                <el-table-column label="Trạng thái" prop="Status" />
                 <el-table-column label="Tổng tiền" prop="TotalAmount" />
                 <el-table-column label="Ghi chú" prop="Note" />
                 <el-table-column label="Action">
@@ -57,6 +56,7 @@ import { useOrderStore } from '@app/stores/order.store'
 import DetailModal from './DetailView.vue'
 import orderService from '../../services/order.service'
 import { useAuthStore } from '@/modules/auth/stores/auth.store';
+import { ORDER_STATUS, ORDER_STATUS_ARRAY } from '@/commons/const'
 
 /**
  * Variable define
@@ -70,9 +70,7 @@ const activeStore = useActiveStore()
 
 const breadcrumbItems = ref<any>([])
 const orderStatuses = ref<any>([]);
-const paymentMethods = ref<any>([]);
-const selectedStatus = ref<any>(0);
-const selectedPaymentMethod = ref<any>(0);
+const selectedStatus = ref<any>(ORDER_STATUS.PROCESSING);
 
 /**
  * Life circle vue js
@@ -91,7 +89,7 @@ onMounted(async () => {
  */
 const loadData = async () => {
     if (loggedIn.value) {
-        await orderStore.getList(null, account.value.UserID, selectedStatus.value, selectedPaymentMethod.value)
+        await orderStore.getList(null, account.value.UserID, selectedStatus.value)
     }
 }
 

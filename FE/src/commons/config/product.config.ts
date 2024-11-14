@@ -9,7 +9,8 @@ export const ROUTER_PRODUCT = [
   {
     path: '/manage-product',
     name: 'ManageProduct',
-    component: () => import('@app/views/post/ProductView.vue')
+    component: () => import('@app/views/post/ProductView.vue'),
+    meta: { requiresAuth: true, requiresMng: true }
   },
   {
     path: '/search/:keyword',

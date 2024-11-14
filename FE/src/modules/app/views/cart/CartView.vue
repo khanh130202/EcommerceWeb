@@ -71,9 +71,8 @@
                     <vc-row :gutter="20" style="margin-top: 10px">
                         <vc-col :span="24">
                             <el-form ref="formRef" :model="form" :rules="rules" label-position="top" label-width="auto">
-                                <el-form-item required prop="RecipientName" label="Họ và tên người nhận">
-                                    <el-input v-model="form.RecipientName"
-                                        placeholder="Nhập họ và tên người nhận hàng" />
+                                <el-form-item required prop="FullName" label="Họ và tên người nhận">
+                                    <el-input v-model="form.FullName" placeholder="Nhập họ và tên người nhận hàng" />
                                 </el-form-item>
                                 <el-form-item required prop="Address" label="Địa chỉ giao hàng">
                                     <el-input v-model="form.Address" placeholder="Địa chỉ giao hàng" />
@@ -111,7 +110,7 @@
  */
 import { getImageUrl } from '@/utils/getPathImg';
 import { storeToRefs } from 'pinia'
-import { ref, reactive, onMounted } from "vue";
+import { ref, reactive, onMounted, watch } from "vue";
 import type { FormInstance } from "element-plus";
 import validate from "@/utils/validate_elp";
 import { useAuthStore } from '@auth/stores/auth.store'
@@ -124,6 +123,7 @@ import { useToastStore } from '@/stores/toast.store'
 import { ORDER_STATUS } from "@/commons/const";
 import { loadScript } from '@paypal/paypal-js';
 import axios from 'axios';
+import productService from '../../services/product.service';
 
 /**
  * Variable define
@@ -139,19 +139,18 @@ const formRef = ref<FormInstance>();
 const isLoading = ref(false);
 const toastStore = useToastStore()
 const paypalRef = ref<any>(null);
-const form = reactive({
+let form = reactive({
     UserID: "",
-    RecipientName: "",
-    email: "",
+    FullName: "",
+    Email: "",
     PhoneNumber: "",
     Address: "",
     Note: '',
-    order_status_id: ORDER_STATUS.PROCESSING,
+    STATUS: ORDER_STATUS.PROCESSING,
     TotalAmount: 0,
     orderItemRequests: [] as any
 });
 const paypal = ref<any>(null)
-const selectedAddress = ref(null);
 
 const rules = reactive({
     Address: [
@@ -161,12 +160,12 @@ const rules = reactive({
         { label: 'Số điện thoại', required: true, validator: validate.required, trigger: ["blur"] },
         { label: 'Số điện thoại', validator: validate.phoneNumberRule, trigger: ["blur"] },
     ],
-    RecipientName: [
+    FullName: [
         { label: 'Họ và tên người nhận', required: true, validator: validate.required, trigger: ["blur"] },
     ],
-    email: [
-        { label: 'Địa chỉ email', required: true, validator: validate.required, trigger: ["blur"] },
-        { label: 'Địa chỉ email', validator: validate.emailRule, trigger: ["blur"] },
+    Email: [
+        { label: 'Địa chỉ Email', required: true, validator: validate.required, trigger: ["blur"] },
+        { label: 'Địa chỉ Email', validator: validate.emailRule, trigger: ["blur"] },
     ],
 });
 
@@ -218,7 +217,26 @@ onMounted(async () => {
             },
         }).render(paypalRef.value);
     }
+
+    form.UserID = account.value.UserID;
+    form.FullName = account.value.FullName;
+    form.Email = account.value.Email;
+    form.PhoneNumber = account.value.PhoneNumber;
+    form.Address = account.value.Address;
+    form.Note = '';
+    form.STATUS = ORDER_STATUS.PROCESSING;
+    form.TotalAmount = cartStore.TotalAmount;
 })
+watch(() => loggedIn.value, () => {
+    form.UserID = account.value.UserID;
+    form.FullName = account.value.FullName;
+    form.Email = account.value.Email;
+    form.PhoneNumber = account.value.PhoneNumber;
+    form.Address = account.value.Address;
+    form.Note = '';
+    form.STATUS = ORDER_STATUS.PROCESSING;
+    form.TotalAmount = cartStore.TotalAmount;
+});
 
 /**
  * Function
@@ -245,6 +263,27 @@ const onCheckout = async (formEl: FormInstance | undefined, payment_method: any)
 
             dataOrderDetail.push(newData);
         });
+
+        var flag = true;
+        await productService.CheckProductAvailability(dataOrderDetail)
+            .then((response: any) => {
+                const rec = response.data?.unavailableProducts
+                if (rec.length > 0) {
+                    flag = false;
+                    rec.forEach((product: any) => {
+                        toastStore.push({
+                            message: `Sản phẩm '${product.ProductName}'' chỉ còn ${product.Quantity} sản phẩm`,
+                            type: 'error',
+                        });
+                    });
+                    return;
+                }
+
+            })
+
+        if (!flag) {
+            return
+        }
 
         isLoading.value = true;
 

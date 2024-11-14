@@ -55,7 +55,7 @@ async function getManyOrderItems(query) {
 }
 
 async function getOrderItemById(OrderItemID) {
-  return orderItemRepository()
+  return await orderItemRepository()
     .where("OrderItemID", OrderItemID)
     .select("*")
     .first();
@@ -95,6 +95,21 @@ async function deleteOrderItemsByIds(orderItemIds) {
   await orderItemRepository().whereIn("OrderItemID", orderItemIds).del();
 }
 
+
+async function getOrderItemsByOrderId(orderId) {
+  return await orderItemRepository()
+    .from("orderitems as ot")
+    .where("ot.OrderID", "=", orderId)
+    .select(
+      "ot.OrderID",
+      "ot.ProductID",
+      "p.ProductName",
+      "ot.Quantity",
+      "ot.Price"
+    )
+    .leftJoin("products as p", "ot.ProductID", "p.ProductID");
+}
+
 module.exports = {
   getManyOrderItems,
   deleteOrderItemsByIds,
@@ -102,4 +117,5 @@ module.exports = {
   createOrderItem,
   updateOrderItem,
   deleteOrderItem,
+  getOrderItemsByOrderId
 };

@@ -51,7 +51,7 @@ async function createUser(payload) {
         .delete();
 
       if (Array.isArray(roleArray) && roleArray.length !== 0) {
-        await insertUserRoles(existingUser.UserID, roleArray, CreatedBy);
+        await insertUserRoles(existingUser.UserID, roleArray);
       }
 
       return { id: existingUser.UserID, ...user };
@@ -68,31 +68,30 @@ async function createUser(payload) {
   const [id] = await userRepository().insert(user);
 
   if (Array.isArray(roleArray) && roleArray.length !== 0) {
-    await insertUserRoles(id, roleArray, CreatedBy);
+    await insertUserRoles(id, roleArray);
   }
 
   return { id, ...user };
 }
 
 // Hàm chèn role cho người dùng
-async function insertUserRoles(UserID, RoleIds, CreatedBy) {
+async function insertUserRoles(UserID, RoleIds) {
   const userRoles = RoleIds.map((RoleID) => ({
     UserID,
     RoleID,
-    CreatedBy,
   }));
 
   await userRoleRepository().insert(userRoles);
 }
 
 async function getManyUsers(query) {
-  const { Email, page = 1, limit = 5 } = query;
+  const { search, page = 1, limit = 5 } = query;
   const paginator = new Paginator(page, limit);
   let results = await userRepository()
     .where("IsDeleted", false)
     .where((builder) => {
-      if (Email) {
-        builder.where("Email", "like", `%${Email}%`);
+      if (search) {
+        builder.where("FullName", "like", `%${search}%`);
       }
     })
     .select(
@@ -198,7 +197,7 @@ async function updateUser(id, payload) {
     typeof RoleIds === "string" ? RoleIds.split(",").map(Number) : RoleIds;
 
   if (Array.isArray(roleArray) && roleArray.length !== 0) {
-    await insertUserRoles(id, roleArray, UpdatedBy);
+    await insertUserRoles(id, roleArray);
   }
 
   return { ...existingUser, ...update };

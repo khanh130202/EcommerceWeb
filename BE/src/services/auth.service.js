@@ -144,7 +144,16 @@ function generateAccessToken(user, roles) {
 }
 
 async function getInfo(UserID) {
-  return userRepository()
+  // Lấy danh sách RoleNames từ bảng userroles
+  const roles = await knex("userroles as ur")
+  .leftJoin("roles as r", "ur.RoleID", "r.RoleID")
+  .where("ur.UserID", UserID)
+  .select("r.RoleName");
+
+  // Biến đổi danh sách vai trò thành mảng RoleNames
+  const RoleNames = roles.map((role) => role.RoleName);
+
+  const user = await userRepository()
     .where("UserID", UserID)
     .andWhere("IsDeleted", false)
     .select(
@@ -153,9 +162,13 @@ async function getInfo(UserID) {
       "FullName",
       "AvatarUrl",
       "PhoneNumber",
-      "Address",
+      "Address"
     )
     .first();
+  return {
+    ...user,
+    RoleNames,
+  };
 }
 
 module.exports = {

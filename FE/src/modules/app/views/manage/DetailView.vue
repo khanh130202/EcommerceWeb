@@ -8,7 +8,7 @@
               Tên người nhận
             </div>
           </template>
-          {{ order.RecipientName }}
+          {{ order.FullName }}
         </el-descriptions-item>
         <el-descriptions-item>
           <template #label>
@@ -48,35 +48,18 @@
               Trạng thái
             </div>
           </template>
-          <el-popconfirm confirm-button-text="Có" width="auto" cancel-button-text="Không" icon="InfoFilled"
-            icon-color="#626AEF" title="Bạn muốn thay đổi trạng thái đơn hàng?" @confirm="changeStatus"
-            @cancel="handleCancelChangeStatus">
+          <el-popconfirm v-if="flgManage" confirm-button-text="Có" width="auto" cancel-button-text="Không"
+            icon="InfoFilled" icon-color="#626AEF" title="Bạn muốn thay đổi trạng thái đơn hàng?"
+            @confirm="changeStatus" @cancel="handleCancelChangeStatus">
             <template #reference>
               <el-radio-group v-model="selectedStatus">
-                <el-radio v-for="(status, index) in orderStatuses" :key="index" :value="status.master_code_id">
-                  {{ status.value }}
+                <el-radio v-for="(status, index) in ORDER_STATUS_ARRAY" :key="index" :value="status.label">
+                  {{ status.label }}
                 </el-radio>
               </el-radio-group>
             </template>
           </el-popconfirm>
-        </el-descriptions-item>
-        <el-descriptions-item>
-          <template #label>
-            <div class="cell-item">
-              Phương thức thanh toán
-            </div>
-          </template>
-          <el-popconfirm confirm-button-text="Có" width="auto" cancel-button-text="Không" icon="InfoFilled"
-            icon-color="#626AEF" title="Bạn muốn thay đổi phương thức thanh toán?" @confirm="changePaymentMethod"
-            @cancel="handleCancelChangePaymentMethod">
-            <template #reference>
-              <el-radio-group v-model="selectedPaymentMethod">
-                <el-radio v-for="(status, index) in paymentMethods" :key="index" :value="status.master_code_id">
-                  {{ status.value }}
-                </el-radio>
-              </el-radio-group>
-            </template>
-          </el-popconfirm>
+          <span v-else>{{ order.Status }}</span>
         </el-descriptions-item>
         <el-descriptions-item>
           <template #label>
@@ -111,6 +94,7 @@ import orderService from '@app/services/order.service';
 import dateTime from "@/utils/dateTime";
 import number from "@/utils/number";
 import { useRouter } from 'vue-router'
+import { ORDER_STATUS_ARRAY, ORDER_STATUS } from "@/commons/const";
 
 /**
  * Variable define
@@ -121,21 +105,17 @@ const modalTitle = ref<any>(null);
 const dataGrid = ref<any>([]);
 const flagOrderDetail = ref<any>(false);
 const selectedStatus = ref<any>(null);
-const selectedPaymentMethod = ref<any>(null);
-const orderStatuses = ref<any>([]);
-const paymentMethods = ref<any>([]);
 
 const order = reactive({
   OrderID: '',
-  order_status_id: '',
-  payment_method_id: '',
-  RecipientName: '',
+  Status: '',
+  FullName: '',
   PhoneNumber: '',
   Address: '',
   CreatedAt: '',
   TotalAmount: '',
   Note: '',
-  is_deleted: '',
+  IsDeleted: '',
 });
 
 let callback = (value: any) => { return value };
@@ -170,9 +150,8 @@ const open = async (title: any, item: any, flagDetail: boolean, flagManage: bool
     if (item)
       orderInfo = (await orderService.detail(item)).data?.order
     Object.assign(order, orderInfo)
+    selectedStatus.value = order.Status
     callback = _callback;
-    selectedStatus.value = order.order_status_id
-    selectedPaymentMethod.value = order.payment_method_id
   }
   modal.value.open();
 };
@@ -193,7 +172,7 @@ const close = () => {
 
 // changeStatus
 const changeStatus = async () => {
-  order.order_status_id = selectedStatus.value
+  order.Status = selectedStatus.value
   await orderService.update(order)
   callback(true);
   close();
@@ -201,22 +180,8 @@ const changeStatus = async () => {
 
 // handleCancelChangeStatus
 const handleCancelChangeStatus = async () => {
-  selectedStatus.value = order.order_status_id
+  selectedStatus.value = order.Status
 };
-
-// changePaymentMethod
-const changePaymentMethod = async () => {
-  order.payment_method_id = selectedPaymentMethod.value
-  await orderService.update(order)
-  callback(true);
-  close();
-};
-
-// handleCancelChangeStatus
-const handleCancelChangePaymentMethod = async () => {
-  selectedPaymentMethod.value = order.payment_method_id
-};
-
 defineExpose({
   open,
   close,

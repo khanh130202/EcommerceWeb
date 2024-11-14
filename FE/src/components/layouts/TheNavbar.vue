@@ -58,6 +58,12 @@
             <el-menu-item index="9-1" @click="onPostSale">
                 Quản lí sản phẩm
             </el-menu-item>
+            <el-menu-item index="9-2" @click="onMngCategory">
+                Quản lí danh mục
+            </el-menu-item>
+            <el-menu-item index="9-3" @click="onMngUser">
+                Quản lí người dùng
+            </el-menu-item>
             <el-menu-item index="9-4" @click="onRevenue">
                 Thống kê
             </el-menu-item>
@@ -202,6 +208,20 @@ const handleSearch = () => {
         params: {
             keyword: keyword.value
         }
+    })
+    keyword.value = ''
+}
+
+const onMngCategory = () => {
+    router.push({
+        name: 'MngCategory',
+    })
+    keyword.value = ''
+}
+
+const onMngUser = () => {
+    router.push({
+        name: 'MngUser',
     })
     keyword.value = ''
 }

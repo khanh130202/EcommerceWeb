@@ -81,7 +81,7 @@ const orderService = {
     const toastStore = useToastStore()
     return await apiClient
       .put(API.CHANGE_STATUS(id), {
-        order_status_id: ORDER_STATUS.CANCELLED,
+        Status: ORDER_STATUS.CANCELLED,
         cancellation_reason: cancellationReason
       })
       .then((response: any) => {

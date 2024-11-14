@@ -2,6 +2,18 @@ const productsService = require("../services/products.service");
 const ApiError = require("../api-error");
 const JSend = require("../jsend");
 
+async function upload(req, res, next) {
+  try {
+    res.json({
+      uploaded: true,
+      url: `http://localhost:5000/public/uploads/ckeditorImages/${req.file.filename}`,
+    });
+  } catch (error) {
+    console.log(error);
+    return next(new ApiError(500, "Error upload image"));
+  }
+}
+
 async function createProduct(req, res, next) {
   if (!req.body?.ProductName || typeof req.body.ProductName !== "string") {
     return next(new ApiError(400, "Name should be a non-empty string"));
@@ -138,6 +150,16 @@ async function deleteMultiProducts(req, res, next) {
   }
 }
 
+async function CheckProductAvailability(req, res, next) {
+  try {    
+    const unavailableProducts = await productsService.CheckProductAvailability(req.body);
+    return res.json(JSend.success({ unavailableProducts }));
+  } catch (error) {
+    console.log(error);
+    return next(new ApiError(500, `Error`));
+  }
+}
+
 module.exports = {
   getProductsByFilter,
   deleteMultiProducts,
@@ -145,4 +167,6 @@ module.exports = {
   createProduct,
   updateProduct,
   deleteProduct,
+  upload,
+  CheckProductAvailability
 };

@@ -70,6 +70,11 @@ const productService = {
         return response
       })
   },
+  // CheckProductAvailability
+  async CheckProductAvailability(data: any): Promise<APIResponse<any>> {
+    return await apiClient.post(API.CheckProductAvailability, data)
+  },
+
 }
 
 export default productService

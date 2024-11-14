@@ -2,6 +2,7 @@ const express = require("express");
 const productsController = require("../controllers/products.controller");
 const authenticateToken = require("../middlewares/auth.middleware");
 const productImagesUpload = require("../middlewares/product-image-upload.middleware");
+const upload = require("../middlewares/ckeditor-upload.middleware");
 const router = express.Router();
 
 module.exports.setup = (app) => {
@@ -18,4 +19,8 @@ module.exports.setup = (app) => {
   router.put("/:id", productImagesUpload, authenticateToken, productsController.updateProduct);
 
   router.delete("/:id", authenticateToken, productsController.deleteProduct);
+  
+  router.post("/upload", upload, productsController.upload);
+  
+  router.post("/check-availability", authenticateToken, productsController.CheckProductAvailability);
 };

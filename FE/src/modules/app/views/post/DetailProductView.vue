@@ -1,5 +1,5 @@
 <template>
-  <vc-modal ref="modal" :title="modalTitle" :type="props.type" @close="close">
+  <vc-modal ref="modal" :title="modalTitle" :type="props.type" @close="close" :width="'90%'">
     <template #content>
       <el-descriptions style="padding: 12px 16px" :column="1" border v-if="type == POPUP_TYPE.VIEW">
         <el-descriptions-item>
@@ -24,7 +24,7 @@
           <template #label>
             <div class="cell-item">Mô tả</div>
           </template>
-          {{ product.Description }}
+          <p v-html="product.Description"></p>
         </el-descriptions-item>
         <el-descriptions-item>
           <template #label>
@@ -71,8 +71,7 @@
           </vc-col>
           <vc-col :span="12">
             <vc-input-group required prop="CategoryID" label="Danh mục">
-              <el-tree-select v-model="product.CategoryID" :data="dataGrid" check-strictly :render-after-expand="false"
-                show-checkbox check-on-click-node />
+              <vc-select v-model="product.CategoryID" :items="dataGrid" fieldText="CategoryName" fieldValue="CategoryID" />
             </vc-input-group>
           </vc-col>
         </vc-row>
@@ -210,7 +209,7 @@ onMounted(async () => {
  */
 const validateQuantity = (val: any) => {
   if (val < 1) {
-    product.Quantity = 1
+    product.StockQuantity = 1
   }
 }
 
@@ -236,17 +235,15 @@ const onSave = async (formEl: FormInstance | undefined) => {
     isLoading.value = true
     const formData = new FormData()
     formData.append('ProductName', product.ProductName ?? '')
-    formData.append('title', product.title ?? '')
     formData.append('CategoryID', product.CategoryID ?? '')
     formData.append('Price', product.Price ?? '')
-    formData.append('Quantity', product.Quantity ?? '')
+    formData.append('StockQuantity', product.StockQuantity ?? '')
     if (ImageSelected.value.length != 0) {
       ImageSelected.value.forEach((file: any) => {
         formData.append('productImages', file.raw)
       })
     }
     formData.append('Description', product.Description ?? '')
-
     if (product.ProductID) {
       await productService.update(product.ProductID, formData).finally(() => {
         isLoading.value = false
@@ -261,14 +258,14 @@ const onSave = async (formEl: FormInstance | undefined) => {
   })
 }
 
-const open = async (title: any, item: any, product_status_id: any, _callback: any) => {
+const open = async (title: any, item: any, _callback: any) => {
   let productInfo = {
     ProductID: '',
     ProductName: null,
     CategoryID: '',
     CategoryName: '',
     Price: null as any,
-    Quantity: null as any,
+    StockQuantity: null as any,
     ImageUrl: null,
     Description: null,
     condition: '',

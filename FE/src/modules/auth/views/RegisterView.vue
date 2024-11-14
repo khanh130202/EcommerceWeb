@@ -9,17 +9,17 @@
                     </div>
                 </template>
                 <el-form ref="formRef" :model="form" :rules="rules" label-position="top" label-width="auto">
-                    <el-form-item required prop="display_name" label="Tên hiển thị">
-                        <el-input v-model="form.display_name" placeholder="Nhập tên hiển thị" />
+                    <el-form-item required prop="FullName" label="Họ và tên">
+                        <el-input v-model="form.FullName" placeholder="Nhập họ và tên" />
                     </el-form-item>
-                    <el-form-item required prop="email" label="Email">
-                        <el-input v-model="form.email" placeholder="Nhập email" type="email" />
+                    <el-form-item required prop="Email" label="Email">
+                        <el-input v-model="form.Email" placeholder="Nhập Email" type="Email" />
                     </el-form-item>
-                    <el-form-item required prop="phone_number" label="Số điện thoại">
-                        <el-input v-model="form.phone_number" placeholder='Nhập số điện thoại' maxlength="20" />
+                    <el-form-item required prop="PhoneNumber" label="Số điện thoại">
+                        <el-input v-model="form.PhoneNumber" placeholder='Nhập số điện thoại' maxlength="20" />
                     </el-form-item>
-                    <el-form-item required prop="password" label="Mật khẩu">
-                        <el-input v-model="form.password" placeholder="Nhập mật khẩu" type="password" show-password />
+                    <el-form-item required prop="Password" label="Mật khẩu">
+                        <el-input v-model="form.Password" placeholder="Nhập mật khẩu" type="password" show-password />
                     </el-form-item>
                     <el-form-item required prop="confirm_password" label="Xác nhận mật khẩu">
                         <el-input v-model="form.confirm_password" placeholder="Nhập xác nhận mật khẩu" type="password"
@@ -71,15 +71,15 @@ const upload = ref<any>(null);
 const avatar_selected = ref<any>(null);
 
 const form = reactive({
-    phone_number: '',
-    password: '',
+    PhoneNumber: '',
+    Password: '',
     confirm_password: '',
-    email: '',
-    display_name: '',
+    Email: '',
+    FullName: '',
 });
 
 const checkSamePassword = (rule: any, value: any, callback: any) => {
-    if (value !== form.password) {
+    if (value !== form.Password) {
         callback(
             new Error('Mật khẩu xác nhận chưa đúng')
         )
@@ -88,10 +88,10 @@ const checkSamePassword = (rule: any, value: any, callback: any) => {
     }
 }
 const rules = reactive({
-    display_name: [
+    FullName: [
         { label: 'Tên hiển thị', required: true, validator: validate.required, trigger: ["blur"] },
     ],
-    password: [
+    Password: [
         { label: 'Mật khẩu', required: true, validator: validate.required, trigger: ["blur"] },
         { label: 'Mật khẩu', validator: validate.minLengthRule, trigger: ["blur"], min: 8 },
         { label: 'Mật khẩu', validator: validate.maxLengthRule, trigger: ["blur"], max: 50 },
@@ -102,13 +102,13 @@ const rules = reactive({
         { label: 'Xác nhận mật khẩu', validator: validate.maxLengthRule, trigger: ["blur"], max: 50 },
         { validator: checkSamePassword, trigger: 'blur' },
     ],
-    phone_number: [
+    PhoneNumber: [
         { label: 'Số điện thoại', required: true, validator: validate.required, trigger: ["blur"] },
         { label: 'Số điện thoại', validator: validate.phoneNumberRule, trigger: ["blur"], max: 20 },
     ],
-    email: [
-        { label: 'Địa chỉ email', required: true, validator: validate.required, trigger: ["blur"] },
-        { label: 'Địa chỉ email', validator: validate.emailRule, trigger: ["blur"] },
+    Email: [
+        { label: 'Địa chỉ Email', required: true, validator: validate.required, trigger: ["blur"] },
+        { label: 'Địa chỉ Email', validator: validate.emailRule, trigger: ["blur"] },
     ],
 });
 
@@ -131,16 +131,16 @@ const onRegister = async (formEl: FormInstance | undefined) => {
 
         isLoading.value = true;
         const formData = new FormData();
-        formData.append('display_name', form.display_name ?? "");
-        formData.append('email', form.email ?? "");
-        formData.append('phone_number', form.phone_number ?? "");
+        formData.append('FullName', form.FullName ?? "");
+        formData.append('Email', form.Email ?? "");
+        formData.append('PhoneNumber', form.PhoneNumber ?? "");
 
         if (avatar_selected.value && avatar_selected.value.length != 0) {
             avatar_selected.value.forEach((file: any) => {
                 formData.append('avatarFile', file.raw);
             });
         }
-        formData.append('password', form.password ?? "");
+        formData.append('Password', form.Password ?? "");
         
         await authService.signUp(formData).finally(() => {
             isLoading.value = false;

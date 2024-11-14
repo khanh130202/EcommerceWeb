@@ -9,6 +9,7 @@ const ordersRouter = require("./routes/orders.router");
 const orderItemsRouter = require("./routes/order-items.router");
 const cartsRouter = require("./routes/carts.router");
 const authRouter = require("./routes/auth.router");
+const revenueRouter = require("./routes/revenues.router");
 const {
   resourceNotFound,
   handleError,
@@ -33,6 +34,7 @@ ordersRouter.setup(app);
 orderItemsRouter.setup(app);
 cartsRouter.setup(app);
 authRouter.setup(app);
+revenueRouter.setup(app);
 app.all("*", methodNotAllowed);
 
 // Handle 404 response

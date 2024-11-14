@@ -17,7 +17,7 @@ export default {
   mounted() {
     ClassicEditor.create(this.$refs.editorContainer, {
       ckfinder: {
-        uploadUrl: `${import.meta.env.VITE_API_URL}/posts/upload`
+        uploadUrl: `${import.meta.env.VITE_API_URL}/products/upload`
       }
     })
       .then(editor => {

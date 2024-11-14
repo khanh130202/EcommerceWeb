@@ -110,13 +110,20 @@ async function getCartItems(UserID) {
     .leftJoin("carts as c", "ci.CartID", "c.CartID")
     .leftJoin("products as p", "ci.ProductID", "p.ProductID")
     .leftJoin(
-      knex("productimages as pi")
+      knex
         .select("pi.ProductID", "pi.ImageUrl")
-        .orderBy("pi.ImageID", "asc")
-        .limit(1)
+        .from("productimages as pi")
+        .select(
+          knex.raw(
+            "ROW_NUMBER() OVER (PARTITION BY pi.ProductID ORDER BY pi.ImageID ASC) as row_num"
+          )
+        )
         .as("pi"),
-      "p.ProductID",
-      "pi.ProductID"
+      function () {
+        this.on("p.ProductID", "=", "pi.ProductID").andOn(
+          knex.raw("pi.row_num = 1")
+        );
+      }
     )
     .where("c.UserID", UserID)
     .select(
@@ -125,7 +132,7 @@ async function getCartItems(UserID) {
       "ci.ProductID",
       "p.ProductName",
       "p.Price",
-      "pi.ImageUrl as ImageUrl",
+      "pi.ImageUrl",
       "ci.Quantity",
       "c.UserID"
     );

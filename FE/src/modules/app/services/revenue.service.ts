@@ -9,10 +9,6 @@ const revenueService = {
   /**
   * Function
   */
-  // getRevenue
-  async getRevenue(params?: unknown): Promise<APIResponse<any[]>> {
-    return await apiClient.post(API.REVENUE, params)
-  },
   // revenueDataChart
   async revenueDataChart(params?: unknown): Promise<APIResponse<any[]>> {
     return await apiClient.post(API.REVENUE_NEW, params)

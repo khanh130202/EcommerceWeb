@@ -36,8 +36,8 @@ const categoryService = {
     return await apiClient.delete(API.DELETE_CART)
   },
 
-  async deleteCartItems(cart_item_id: any) {
-    return await apiClient.delete(API.DELETE_CART_ITEMS(cart_item_id))
+  async deleteCartItems(CartItemID: any) {
+    return await apiClient.delete(API.DELETE_CART_ITEMS(CartItemID))
   },
 }
 

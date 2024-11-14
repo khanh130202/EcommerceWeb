@@ -4,7 +4,7 @@ const authenticateToken = require("../middlewares/auth.middleware");
 const router = express.Router();
 
 module.exports.setup = (app) => {
-  app.use("/api/v1/orderItems", router);
+  app.use("/api/v1/orderitems", router);
   
   router.get("/", orderItemsController.getOrderItemsByFilter);
 
@@ -12,7 +12,7 @@ module.exports.setup = (app) => {
 
   router.delete("/", authenticateToken, orderItemsController.deleteMultiOrderItems);
 
-  router.get("/:id", orderItemsController.getOrderItem);
+  router.get("/:OrderID", authenticateToken, orderItemsController.getOrderItemsByOrderId);
 
   router.put("/:id", authenticateToken, orderItemsController.updateOrderItem);
 

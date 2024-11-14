@@ -4,7 +4,8 @@ export const ROUTER_REVENUE = [
   {
     path: '/revenue',
     name: 'Revenue',
-    component: () => import('@app/views/manage/RevenueView.vue')
+    component: () => import('@app/views/manage/RevenueView.vue'),
+    meta: { requiresAuth: true, requiresMng: true }
   },
 ]
 
@@ -25,7 +26,7 @@ export const tableConfig = {
 
 export const colConfig = [
   {
-    key: 'productName',
+    key: 'ProductName',
     title: "Tên sản phẩm"
   },
   {

@@ -1,5 +1,6 @@
 const knex = require("../database/knex");
 const Paginator = require("./paginator");
+const orderItemsService = require("../services/order-items.service");
 
 function orderRepository() {
   return knex("orders");
@@ -12,7 +13,7 @@ function readOrder(payload) {
     TotalAmount: payload.TotalAmount,
     PhoneNumber: payload.PhoneNumber,
     Address: payload.Address,
-    RecipientName: payload.RecipientName,
+    FullName: payload.FullName,
     CreatedBy: payload.CreatedBy,
     UpdatedAt: new Date(),
     UpdatedBy: payload.UpdatedBy,
@@ -23,22 +24,35 @@ function readOrder(payload) {
 async function createOrder(payload) {
   const order = readOrder(payload);
   const [OrderID] = await orderRepository().insert(order);
+  for (const item of payload.orderItemRequests) {
+    item.OrderID = OrderID;
+    orderItemsService.createOrderItem(item);
+  }
   return { OrderID, ...order };
 }
 
 async function getManyOrders(query) {
-  const { page = 1, limit = 5 } = query;
+  const { page = 1, limit = 5, CreatedBy, Status } = query;
   const paginator = new Paginator(page, limit);
   let results = await orderRepository()
     .where("IsDeleted", false)
+    .modify((builder) => {
+      if (Status) {
+        builder.where("Status", "=", Status);
+      }
+      if (CreatedBy) {
+        builder.where("CreatedBy", "=", CreatedBy);
+      }
+    })
     .select(
       knex.raw("count(OrderID) OVER() AS recordCount"),
+      "OrderID",
       "UserID",
       "Status",
       "TotalAmount",
       "PhoneNumber",
       "Address",
-      "RecipientName",
+      "FullName",
       "CreatedAt",
       "CreatedBy",
       "UpdatedAt",

@@ -71,10 +71,6 @@ import { useAuthStore } from '@auth/stores/auth.store'
 /**
  * Variable define
  */
-const props = defineProps<{
-  product_status_id?: any
-}>()
-
 const authStore = useAuthStore()
 const { account } = storeToRefs(authStore)
 const store = useProductStore()
@@ -116,7 +112,7 @@ const onAddNew = () => {
 // onEdit
 const onEdit = (item: any) => {
   popupType.value = POPUP_TYPE.EDIT
-  detailRef.value.open('Chỉnh sửa', item.ProductID, props.product_status_id, async (res: any) => {
+  detailRef.value.open('Chỉnh sửa', item.ProductID, async (res: any) => {
     if (res) await onSearch()
   })
 }
@@ -124,7 +120,7 @@ const onEdit = (item: any) => {
 // onView
 const onView = (item: any) => {
   popupType.value = POPUP_TYPE.VIEW
-  detailRef.value.open('Chi tiết', item.ProductID, props.product_status_id)
+  detailRef.value.open('Chi tiết', item.ProductID)
 }
 
 // onSort

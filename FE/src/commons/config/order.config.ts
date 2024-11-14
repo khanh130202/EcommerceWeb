@@ -11,7 +11,7 @@ export const ROUTER_ORDER = [
     path: '/manage-order',
     name: 'ManageOrder',
     component: () => import('@app/views/manage/ManageOrder.vue'),
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true, requiresMng: true }
   },
 ]
 

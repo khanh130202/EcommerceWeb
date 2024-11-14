@@ -127,6 +127,23 @@ async function deleteMultiOrderItems(req, res, next) {
   }
 }
 
+async function getOrderItemsByOrderId(req, res, next) {
+  const { OrderID } = req.params;
+  try {
+    result = await orderItemsService.getOrderItemsByOrderId(OrderID);
+  } catch (error) {
+    console.log(error);
+    return next(
+      new ApiError(500, "An error occurred while retrieving orderItems")
+    );
+  }
+  return res.json(
+    JSend.success({
+      orderItems: result,
+    })
+  );
+}
+
 module.exports = {
   getOrderItemsByFilter,
   deleteMultiOrderItems,
@@ -134,4 +151,5 @@ module.exports = {
   createOrderItem,
   updateOrderItem,
   deleteOrderItem,
+  getOrderItemsByOrderId
 };

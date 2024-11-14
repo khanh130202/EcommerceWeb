@@ -69,7 +69,7 @@ export const useCartStore = defineStore("useCartStore", {
 
         async updateCartItem(item: any) {
             await cartService.update({
-                cart_item_id: item.cart_item_id,
+                CartItemID: item.CartItemID,
                 Quantity: item.Quantity
             })
         },
@@ -77,7 +77,7 @@ export const useCartStore = defineStore("useCartStore", {
         async deleteCartItem(productId: any) {
             const item = this.items.find((i: any) => i.ProductID === productId);
             if (item) {
-                await cartService.deleteCartItems(item.cart_item_id)
+                await cartService.deleteCartItems(item.CartItemID)
             }
         },
 

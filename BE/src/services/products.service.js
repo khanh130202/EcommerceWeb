@@ -48,6 +48,7 @@ async function createProduct(payload) {
       }
       return { id: existingProduct.ProductID, ...product };
     }
+    return { message: "Product already exist." };
   }
 
   const product = readProduct(payload);
@@ -105,13 +106,12 @@ async function getManyProducts(query) {
         .from("productimages as pi")
         .select(
           knex.raw(
-            "ROW_NUMBER() OVER (PARTITION BY pi.ProductID) as row_num"
+            "ROW_NUMBER() OVER (PARTITION BY pi.ProductID ORDER BY pi.ImageID ASC) as row_num"
           )
         )
-        .orderBy("pi.ImageID", "asc")
         .as("pi"),
       function () {
-        this.on(
+        this.on("p.ProductID", "=", "pi.ProductID").andOn(
           knex.raw("pi.row_num = 1")
         );
       }
@@ -125,6 +125,7 @@ async function getManyProducts(query) {
   }
 
   let results = await queryBuilder;
+  
   let totalRecords = 0;
   results = results.map((result) => {
     totalRecords = result.recordCount;
@@ -204,6 +205,31 @@ async function deleteProductsByIds(productIds, UserID) {
     .update({ IsDeleted: true, UpdatedAt: UserID });
 }
 
+async function CheckProductAvailability(dataOrderDetail) {
+  const unavailableProducts = [];
+
+  for (const item of dataOrderDetail) {
+    const product = await productRepository()
+      .select("ProductID", "ProductName", "StockQuantity")
+      .where("ProductID", item.ProductID)
+      .andWhere("IsDeleted", false)
+      .first();
+
+    if (!product) {
+      throw new Error(`Product with ID ${item.ProductID} not found`);
+    }
+
+    if (item.Quantity > product.StockQuantity) {
+      unavailableProducts.push({
+        ProductName: product.ProductName,
+        Quantity: product.StockQuantity,
+      });
+    }
+  }
+
+  return unavailableProducts;
+}
+
 module.exports = {
   getManyProducts,
   deleteProductsByIds,
@@ -211,4 +237,5 @@ module.exports = {
   createProduct,
   updateProduct,
   deleteProduct,
+  CheckProductAvailability
 };
