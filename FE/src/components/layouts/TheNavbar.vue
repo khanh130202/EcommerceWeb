@@ -7,7 +7,7 @@
         </el-menu-item>
 
         <div>
-            <el-input style="width: 240px; height: 40px; margin: auto 0px" placeholder="Nhập từ khóa tìm kiếm" prefix-icon="Search" v-model="keyword"
+            <el-input style="width: 240px; height: 40px; margin: auto 20px" placeholder="Nhập từ khóa tìm kiếm" prefix-icon="Search" v-model="keyword"
                 @keyup.enter="handleSearch" />
         </div>
 
