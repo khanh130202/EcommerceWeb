@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th10 14, 2024 lúc 08:20 AM
+-- Thời gian đã tạo: Th10 15, 2024 lúc 01:59 PM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.2.12
 
@@ -24,6 +24,19 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+-- Cấu trúc bảng cho bảng `cartitems`
+--
+
+CREATE TABLE `cartitems` (
+  `CartItemID` int(11) NOT NULL,
+  `CartID` int(11) DEFAULT NULL,
+  `ProductID` int(11) DEFAULT NULL,
+  `Quantity` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Cấu trúc bảng cho bảng `carts`
 --
 
@@ -36,18 +49,12 @@ CREATE TABLE `carts` (
   `UpdatedAt` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- --------------------------------------------------------
-
 --
--- Cấu trúc bảng cho bảng `cartitems`
+-- Đang đổ dữ liệu cho bảng `carts`
 --
 
-CREATE TABLE `cartitems` (
-  `CartItemID` int(11) NOT NULL,
-  `CartID` int(11) DEFAULT NULL,
-  `ProductID` int(11) DEFAULT NULL,
-  `Quantity` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+INSERT INTO `carts` (`CartID`, `UserID`, `CreatedBy`, `CreatedAt`, `UpdatedBy`, `UpdatedAt`) VALUES
+(2, 1, 1, '2024-11-15 19:50:36', NULL, '2024-11-15 19:50:36');
 
 -- --------------------------------------------------------
 
@@ -66,6 +73,16 @@ CREATE TABLE `categories` (
   `IsDeleted` tinyint(1) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Đang đổ dữ liệu cho bảng `categories`
+--
+
+INSERT INTO `categories` (`CategoryID`, `CategoryName`, `Description`, `CreatedBy`, `CreatedAt`, `UpdatedBy`, `UpdatedAt`, `IsDeleted`) VALUES
+(1, 'Bánh mặn', 'Mô tả danh mục 01', 1, '2024-11-12 18:39:28', 1, '2024-11-15 19:48:16', 0),
+(2, 'Danh mục 020', 'Mô tả danh mục 01', 1, '2024-11-14 19:41:12', 1, '0000-00-00 00:00:00', 1),
+(3, 'Bánh ngọt', 'Mô tả danh mục 01', 1, '2024-11-15 19:48:22', 1, '2024-11-15 19:48:22', 0),
+(4, 'Bánh kem', 'Mô tả danh mục 01', 1, '2024-11-15 19:48:28', 1, '2024-11-15 19:48:28', 0);
+
 -- --------------------------------------------------------
 
 --
@@ -80,6 +97,13 @@ CREATE TABLE `orderitems` (
   `Price` decimal(10,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Đang đổ dữ liệu cho bảng `orderitems`
+--
+
+INSERT INTO `orderitems` (`OrderItemID`, `OrderID`, `ProductID`, `Quantity`, `Price`) VALUES
+(3, 5, 5, 1, 350000.00);
+
 -- --------------------------------------------------------
 
 --
@@ -90,7 +114,7 @@ CREATE TABLE `orders` (
   `OrderID` int(11) NOT NULL,
   `UserID` int(11) DEFAULT NULL,
   `TotalAmount` decimal(10,2) NOT NULL,
-  `Status` enum('pending','shipped','delivered','cancelled') DEFAULT 'pending',
+  `Status` varchar(255) DEFAULT 'Chờ xử lí',
   `FullName` varchar(255) DEFAULT NULL,
   `PhoneNumber` varchar(15) DEFAULT NULL,
   `Address` varchar(255) DEFAULT NULL,
@@ -100,6 +124,13 @@ CREATE TABLE `orders` (
   `UpdatedAt` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `IsDeleted` tinyint(1) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `orders`
+--
+
+INSERT INTO `orders` (`OrderID`, `UserID`, `TotalAmount`, `Status`, `FullName`, `PhoneNumber`, `Address`, `CreatedBy`, `CreatedAt`, `UpdatedBy`, `UpdatedAt`, `IsDeleted`) VALUES
+(5, 1, 350000.00, 'Chờ xử lí', 'Nguyễn Văn Hưng', '0779800080', 'Cần Thơ', 1, '2024-11-15 19:57:45', 1, '2024-11-15 19:58:38', 0);
 
 -- --------------------------------------------------------
 
@@ -112,6 +143,15 @@ CREATE TABLE `productimages` (
   `ProductID` int(11) DEFAULT NULL,
   `ImageUrl` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `productimages`
+--
+
+INSERT INTO `productimages` (`ImageID`, `ProductID`, `ImageUrl`) VALUES
+(6, 5, '/public/uploads/products/1731674992614-368722548.png'),
+(7, 5, '/public/uploads/products/1731674992614-281360558.png'),
+(8, 5, '/public/uploads/products/1731674992615-838727445.png');
 
 -- --------------------------------------------------------
 
@@ -134,6 +174,13 @@ CREATE TABLE `products` (
   `IsDeleted` tinyint(1) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Đang đổ dữ liệu cho bảng `products`
+--
+
+INSERT INTO `products` (`ProductID`, `ProductName`, `Description`, `Price`, `StockQuantity`, `CategoryID`, `ImageUrl`, `CreatedBy`, `CreatedAt`, `UpdatedBy`, `UpdatedAt`, `IsDeleted`) VALUES
+(5, 'Bánh Kem Socola Hạnh Nhân', '<p>Bánh kem Socola Hạnh Nhân với lớp kem mịn, thơm ngậy, kết hợp giữa vị ngọt ngào của socola và vị bùi béo của hạnh nhân. Hoàn hảo cho các bữa tiệc sinh nhật hoặc kỷ niệm đặc biệt.</p>', 350000.00, 100, 4, NULL, 1, '2024-11-15 19:49:52', 1, '2024-11-15 19:50:46', 0);
+
 -- --------------------------------------------------------
 
 --
@@ -145,6 +192,14 @@ CREATE TABLE `roles` (
   `RoleName` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Đang đổ dữ liệu cho bảng `roles`
+--
+
+INSERT INTO `roles` (`RoleID`, `RoleName`) VALUES
+(1, 'Admin'),
+(2, 'User');
+
 -- --------------------------------------------------------
 
 --
@@ -155,6 +210,13 @@ CREATE TABLE `userroles` (
   `UserID` int(11) NOT NULL,
   `RoleID` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `userroles`
+--
+
+INSERT INTO `userroles` (`UserID`, `RoleID`) VALUES
+(1, 1);
 
 -- --------------------------------------------------------
 
@@ -178,15 +240,15 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Chỉ mục cho các bảng đã đổ
+-- Đang đổ dữ liệu cho bảng `users`
 --
 
+INSERT INTO `users` (`UserID`, `Email`, `PasswordHash`, `FullName`, `PhoneNumber`, `Address`, `AvatarUrl`, `CreatedBy`, `CreatedAt`, `UpdatedBy`, `UpdatedAt`, `IsDeleted`) VALUES
+(1, 'admin@gmail.com', '$2a$10$4fwz6ofuMKuG4OY.e8C2guDAL5d3bKfuDUpKgxQ3caqkI17fglz/m', 'Nguyễn Văn Hưng', '0779800080', 'Cần Thơ', '/public/uploads/avatars/1731674858791-912757161.jpg', NULL, '2024-11-12 18:27:21', 1, '2024-11-15 19:57:24', 0);
+
 --
--- Chỉ mục cho bảng `carts`
+-- Chỉ mục cho các bảng đã đổ
 --
-ALTER TABLE `carts`
-  ADD PRIMARY KEY (`CartID`),
-  ADD KEY `UserID` (`UserID`);
 
 --
 -- Chỉ mục cho bảng `cartitems`
@@ -195,6 +257,13 @@ ALTER TABLE `cartitems`
   ADD PRIMARY KEY (`CartItemID`),
   ADD KEY `CartID` (`CartID`),
   ADD KEY `ProductID` (`ProductID`);
+
+--
+-- Chỉ mục cho bảng `carts`
+--
+ALTER TABLE `carts`
+  ADD PRIMARY KEY (`CartID`),
+  ADD KEY `UserID` (`UserID`);
 
 --
 -- Chỉ mục cho bảng `categories`
@@ -257,68 +326,62 @@ ALTER TABLE `users`
 --
 
 --
--- AUTO_INCREMENT cho bảng `carts`
---
-ALTER TABLE `carts`
-  MODIFY `CartID` int(11) NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT cho bảng `cartitems`
 --
 ALTER TABLE `cartitems`
-  MODIFY `CartItemID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `CartItemID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT cho bảng `carts`
+--
+ALTER TABLE `carts`
+  MODIFY `CartID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT cho bảng `categories`
 --
 ALTER TABLE `categories`
-  MODIFY `CategoryID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `CategoryID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT cho bảng `orderitems`
 --
 ALTER TABLE `orderitems`
-  MODIFY `OrderItemID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `OrderItemID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT cho bảng `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `OrderID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `OrderID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT cho bảng `productimages`
 --
 ALTER TABLE `productimages`
-  MODIFY `ImageID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `ImageID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT cho bảng `products`
 --
 ALTER TABLE `products`
-  MODIFY `ProductID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `ProductID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT cho bảng `roles`
 --
 ALTER TABLE `roles`
-  MODIFY `RoleID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `RoleID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT cho bảng `users`
 --
 ALTER TABLE `users`
-  MODIFY `UserID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `UserID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- Các ràng buộc cho các bảng đã đổ
 --
-
---
--- Các ràng buộc cho bảng `carts`
---
-ALTER TABLE `carts`
-  ADD CONSTRAINT `cart_ibfk_1` FOREIGN KEY (`UserID`) REFERENCES `users` (`UserID`) ON DELETE CASCADE;
 
 --
 -- Các ràng buộc cho bảng `cartitems`
@@ -326,6 +389,12 @@ ALTER TABLE `carts`
 ALTER TABLE `cartitems`
   ADD CONSTRAINT `cartitems_ibfk_1` FOREIGN KEY (`CartID`) REFERENCES `carts` (`CartID`) ON DELETE CASCADE,
   ADD CONSTRAINT `cartitems_ibfk_2` FOREIGN KEY (`ProductID`) REFERENCES `products` (`ProductID`) ON DELETE CASCADE;
+
+--
+-- Các ràng buộc cho bảng `carts`
+--
+ALTER TABLE `carts`
+  ADD CONSTRAINT `carts_ibfk_1` FOREIGN KEY (`UserID`) REFERENCES `users` (`UserID`) ON DELETE CASCADE;
 
 --
 -- Các ràng buộc cho bảng `orderitems`

@@ -94,8 +94,6 @@
                                     </div>
                                 </el-form-item>
                             </el-form>
-
-                            <div ref="paypalRef"></div>
                         </vc-col>
                     </vc-row>
                 </el-card>
@@ -121,7 +119,6 @@ import number from '@/utils/number';
 import orderService from '../../services/order.service';
 import { useToastStore } from '@/stores/toast.store'
 import { ORDER_STATUS } from "@/commons/const";
-import { loadScript } from '@paypal/paypal-js';
 import axios from 'axios';
 import productService from '../../services/product.service';
 
@@ -138,7 +135,6 @@ const { account, loggedIn } = storeToRefs(authStore)
 const formRef = ref<FormInstance>();
 const isLoading = ref(false);
 const toastStore = useToastStore()
-const paypalRef = ref<any>(null);
 let form = reactive({
     UserID: "",
     FullName: "",
@@ -150,7 +146,6 @@ let form = reactive({
     TotalAmount: 0,
     orderItemRequests: [] as any
 });
-const paypal = ref<any>(null)
 
 const rules = reactive({
     Address: [
@@ -183,40 +178,6 @@ onMounted(async () => {
             Price: item.Price,
         })
     })
-
-    paypal.value = await loadScript({
-        clientId: 'AbEkMIt57ky9uFBp5IUSAyEEZq_f4PbXCIIXPAzxVl5LXQjjMCvd82yWQRJFiw39jnwKoQfleIvq-3iR',
-        currency: 'VND',
-    });
-    if (paypal.value) {
-        paypal.value.Buttons({
-            createOrder: async (data: any, actions: any) => {
-                // const response = await axios.get(
-                //     "https://api.exchangerate-api.com/v4/latest/USD"
-                // );
-                // const usdAmount = (cartStore.TotalAmount / response.data.rates.VND).toFixed(2);
-
-                return actions.order.create({
-                    purchase_units: [
-                        {
-                            amount: {
-                                value: cartStore.TotalAmount, // Số tiền thanh toán
-                            },
-                        },
-                    ],
-                });
-            },
-            onApprove: (data: any, actions: any) => {
-                return actions.order.capture().then((details: any) => {
-                    onCheckout(formRef.value, 'PAYPAL')
-                    alert(`Transaction completed by ${details.payer.name.given_name}`);
-                });
-            },
-            onError: (err: any) => {
-                console.error(err);
-            },
-        }).render(paypalRef.value);
-    }
 
     form.UserID = account.value.UserID;
     form.FullName = account.value.FullName;

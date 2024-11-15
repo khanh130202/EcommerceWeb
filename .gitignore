@@ -123,5 +123,5 @@ dist
 .pnp.*
 
 # images
-BE/public/products
-BE/public/uploads
+# BE/public/products
+# BE/public/uploads

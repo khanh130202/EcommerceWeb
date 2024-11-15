@@ -11,7 +11,6 @@ export const useCategoryStore = defineStore('useCategoryStore', {
     dataGrid: <any>[],
     pageConfig: <any>[],
     loading: <any>[],
-    pageConfig: <any>[],
     search: <any>[]
   }),
   actions: {

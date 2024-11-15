@@ -32,9 +32,7 @@
 
         <div class="dashed"></div>
         <h5 style="margin: 20px 0 10px 0">Mô tả sản phẩm</h5>
-        <p>
-          {{ data.Description }}
-        </p>
+        <p v-html="data.Description"></p>
       </vc-col>
     </vc-row>
     <hr />

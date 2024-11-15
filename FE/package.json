@@ -15,7 +15,6 @@
   },
   "dependencies": {
     "@ckeditor/ckeditor5-build-classic": "^43.2.0",
-    "@paypal/paypal-js": "^8.1.2",
     "axios": "^1.7.2",
     "chart.js": "^4.4.5",
     "element-plus": "^2.8.0",

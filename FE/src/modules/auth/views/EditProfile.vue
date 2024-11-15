@@ -13,7 +13,7 @@
         <vc-row :gutter="20">
           <vc-col :span="12">
             <vc-input-group required prop="Email" label='Email'>
-              <vc-input v-model="user.Email" placeholder='Nhập Email' maxlength="255" />
+              <vc-input v-model="user.Email" placeholder='Nhập Email' maxlength="255" disabled />
             </vc-input-group>
           </vc-col>
           <vc-col :span="12">
@@ -26,37 +26,6 @@
           <vc-col :span="24">
             <vc-input-group required prop="Address" label='Địa chỉ'>
               <vc-input v-model="user.Address" placeholder='Nhập địa chỉ' maxlength="255" type="textarea" />
-            </vc-input-group>
-          </vc-col>
-        </vc-row>
-        <vc-row :gutter="20" v-if="props.type == POPUP_TYPE.CREATE">
-          <vc-col :span="12">
-            <vc-input-group required prop="RoleIds" label='Quyền người dùng'>
-              <el-select v-model="user.RoleIds" multiple collapse-tags collapse-tags-tooltip
-                placeholder="Chọn quyền người dùng">
-                <el-option v-for="item in roles" :key="item.RoleID" :label="item.RoleName" :value="item.RoleID" />
-              </el-select>
-            </vc-input-group>
-          </vc-col>
-          <vc-col :span="12">
-            <vc-input-group required prop="Password" label='Mật khẩu'>
-              <vc-input v-model="user.Password" placeholder='Nhập mật khẩu' maxlength="50" type="password"
-                show-password />
-            </vc-input-group>
-          </vc-col>
-        </vc-row>
-        <vc-row :gutter="20" v-else>
-          <vc-col :span="12">
-            <vc-input-group required prop="RoleIds" label='Quyền người dùng'>
-              <el-select v-model="user.RoleIds" multiple collapse-tags collapse-tags-tooltip
-                placeholder="Chọn quyền người dùng">
-                <el-option v-for="item in roles" :key="item.RoleID" :label="item.RoleName" :value="item.RoleID" />
-              </el-select>
-            </vc-input-group>
-          </vc-col>
-          <vc-col :span="12">
-            <vc-input-group label='Mật khẩu'>
-              <vc-input v-model="user.Password" placeholder='Nhập mật khẩu' maxlength="50" type="password" />
             </vc-input-group>
           </vc-col>
         </vc-row>
@@ -112,10 +81,6 @@ import { getImageUrl } from '@/utils/getPathImg';
  * Variable define
  */
 const rules = reactive({
-  Password: [
-    { label: 'Mật khẩu', required: true, validator: validate.required, trigger: ["blur"] },
-    { label: 'Mật khẩu', validator: validate.maxLengthRule, trigger: ["blur"], max: 50 },
-  ],
   FullName: [
     { label: 'Họ và tên', required: true, validator: validate.required, trigger: ["blur"] },
     { label: 'Họ và tên', validator: validate.maxLengthRule, trigger: ["blur"], max: 100 },
@@ -124,16 +89,13 @@ const rules = reactive({
     { label: 'Số điện thoại', required: true, validator: validate.required, trigger: ["blur"] },
     { label: 'Số điện thoại', validator: validate.phoneNumberRule, trigger: ["blur"], max: 20 },
   ],
-  Address: [
-    { label: 'Địa chỉ', required: true, validator: validate.required, trigger: ["blur"] },
-    { label: 'Địa chỉ', validator: validate.maxLengthRule, trigger: ["blur"], max: 255 },
-  ],
   Email: [
     { label: 'Email', required: true, validator: validate.required, trigger: ["blur"] },
     { label: 'Email', validator: validate.emailRule, trigger: ["blur"], max: 255 },
   ],
-  RoleIds: [
-    { label: 'Quyền người dùng', required: true, validator: validate.required, trigger: ["change"] },
+  Address: [
+    { label: 'Địa chỉ', required: true, validator: validate.required, trigger: ["blur"] },
+    { label: 'Địa chỉ', validator: validate.maxLengthRule, trigger: ["blur"], max: 255 },
   ],
 });
 
@@ -150,7 +112,6 @@ const modalTitle = ref<any>(null);
 const avatar_selected = ref<any>(null);
 const flagEmail = ref<any>(null);
 const roles = ref<any>([]);
-const userStatuses = ref<any>([]);
 let callback = (value: any) => { return value };
 
 const user = reactive({
@@ -178,7 +139,6 @@ const onSave = async (formEl: FormInstance | undefined) => {
 
   await formEl.validate(async (valid) => {
     if (!valid) return;
-    console.log(user);
 
     isLoading.value = true;
 
@@ -234,10 +194,6 @@ const open = async (title: any, item: any, _callback: any) => {
   user.Password = ''
   flagEmail.value = user.Email;
   modal.value.open();
-
-  if (props.type != POPUP_TYPE.VIEW) {
-    roles.value = (await userService.getListRole()).data?.roles
-  }
 };
 
 const close = () => {
@@ -262,6 +218,6 @@ defineExpose({
 </script>
 <style>
 .el-form-item {
-  display: block;
+  display: block !important;
 }
 </style>

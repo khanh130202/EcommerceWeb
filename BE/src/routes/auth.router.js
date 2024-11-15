@@ -14,4 +14,6 @@ module.exports.setup = (app) => {
     router.post("/refresh-token", authController.refreshToken);
 
     router.get("/infoLogin", authenticateToken, authController.getInfo);
+    
+    router.put("/change-password", authenticateToken, authController.changePassword);
 }

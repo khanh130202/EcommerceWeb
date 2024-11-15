@@ -12,10 +12,11 @@
                     <el-descriptions-item label="Tên hiển thị">{{ account.FullName }}</el-descriptions-item>
                     <el-descriptions-item label="Số điện thoại">{{ account.PhoneNumber }}</el-descriptions-item>
                     <el-descriptions-item label="Email">{{ account.Email }}</el-descriptions-item>
+                    <el-descriptions-item label="Địa chỉ">{{ account.Address }}</el-descriptions-item>
                 </el-descriptions>
                 <div style="margin-top: 10px;">
                     <el-button :loading="isLoading" type="success" @click="onClickUpdate">
-                        Địa chỉ
+                        Thay đổi
                     </el-button>
                     <span style="margin: 0 10px;">|</span>
                     <el-button :loading="isLoading" type="warning" @click="onClickChangePassword">
@@ -27,6 +28,7 @@
         <el-col :sm="6"></el-col>
     </el-row>
     <change-password ref="changePassRef"></change-password>
+    <edit-profile ref="editProfileRef"></edit-profile>
 </template>
 
 <script setup lang="ts">
@@ -37,14 +39,15 @@ import { storeToRefs } from 'pinia'
 import { ref, reactive, onMounted } from "vue";
 import { useAuthStore } from '@auth/stores/auth.store'
 import { useActiveStore } from '@/stores/active.store'
+import EditProfile from './EditProfile.vue';
 import ChangePassword from './ChangePassword.vue';
 import { getImageUrl } from '@/utils/getPathImg';
 
 /**
  * Variable define
  */
-const editRef = ref<any>(null);
 const changePassRef = ref<any>(null);
+const editProfileRef = ref<any>(null);
 const activeStore = useActiveStore()
 const authStore = useAuthStore()
 const { account } = storeToRefs(authStore)
@@ -66,7 +69,9 @@ onMounted(() => {
  * Function
  */
 const onClickUpdate = async () => {
-    editRef.value.open("Cập nhật thông tin cá nhân", account.value.UserID)
+    editProfileRef.value.open("Cập nhật thông tin cá nhân", account.value.UserID, async () => {
+        await authStore.refresh()
+    })
 };
 const onClickChangePassword = async () => {
     changePassRef.value.open("Đổi mật khẩu", account.value.UserID)

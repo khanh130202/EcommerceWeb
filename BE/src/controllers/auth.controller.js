@@ -11,7 +11,9 @@ async function signUp(req, res, next) {
 
     const result = await authServices.registerUser({
       ...req.body,
-      AvatarUrl: req.file ? `/public/uploads/avatars/${req.file.filename}` : null,
+      AvatarUrl: req.file
+        ? `/public/uploads/avatars/${req.file.filename}`
+        : null,
     });
 
     if (result.message) {
@@ -85,9 +87,7 @@ async function refreshToken(req, res, next) {
   }
 }
 
-
 async function getInfo(req, res, next) {
-
   try {
     const user = await authServices.getInfo(req.user.UserID);
     if (!user) {
@@ -96,7 +96,29 @@ async function getInfo(req, res, next) {
     return res.json(JSend.success({ user }));
   } catch (error) {
     console.log(error);
-    return next(new ApiError(500, `Error retrieving user with id=${req.user.UserID}`));
+    return next(
+      new ApiError(500, `Error retrieving user with id=${req.user.UserID}`)
+    );
+  }
+}
+
+async function changePassword(req, res, next) {
+  try {
+    const result = await authServices.changePassword(
+      req.user.UserID,
+      req.body.current_password,
+      req.body.new_password
+    );
+    if (result == 0) {
+      return next(new ApiError(400, "Người dùng không tồn tại"));
+    }
+    if (result == -1) {
+      return next(new ApiError(400, "Mật khẩu hiện tại không đúng"));
+    }
+    return res.json(JSend.success());
+  } catch (error) {
+    console.log(error);
+    return next(new ApiError(500, `Error`));
   }
 }
 
@@ -104,5 +126,6 @@ module.exports = {
   signUp,
   login,
   refreshToken,
-  getInfo
+  getInfo,
+  changePassword,
 };

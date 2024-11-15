@@ -171,10 +171,43 @@ async function getInfo(UserID) {
   };
 }
 
+async function changePassword(userId, currentPassword, newPassword) {
+  // Tìm người dùng dựa trên userId
+  const user = await userRepository()
+    .where("UserID", userId)
+    .andWhere("IsDeleted", false)
+    .select("PasswordHash")
+    .first();
+
+  if (!user) {
+    return 0;
+  }
+
+  // Kiểm tra xem mật khẩu hiện tại có đúng không
+  const isPasswordMatch = await bcrypt.compare(
+    currentPassword,
+    user.PasswordHash
+  );
+  if (!isPasswordMatch) {
+    return -1;
+  }
+
+  // Mã hóa mật khẩu mới
+  const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+
+  // Cập nhật mật khẩu mới cho người dùng
+  await userRepository()
+    .where("UserID", userId)
+    .update({ PasswordHash: hashedNewPassword });
+
+  return 1;
+}
+
 module.exports = {
   registerUser,
   loginUser,
   refreshToken,
   generateAccessToken,
   getInfo,
+  changePassword,
 };
